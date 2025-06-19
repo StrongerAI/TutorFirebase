@@ -1,5 +1,6 @@
 import React from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Sparkles } from 'lucide-react'; // Added import for Sparkles
 
 interface FeaturePageProps {
   title: string;
