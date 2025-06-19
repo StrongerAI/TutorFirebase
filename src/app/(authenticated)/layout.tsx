@@ -34,9 +34,14 @@ export default function AuthenticatedLayout({
   }
 
   return (
-    <div className="flex flex-col min-h-screen w-full">
+    <div className="flex flex-col h-screen w-full"> {/* Changed min-h-screen to h-screen */}
       <AppHeader />
-      <main className="flex-grow flex flex-col p-4 lg:p-6 bg-background">
+      {/* 
+        Changed flex-grow to flex-1 to make main content area take up remaining vertical space.
+        Removed padding from here, individual pages or ChatInterface can manage their own padding.
+        Added overflow-hidden to prevent double scrollbars if children manage their own scroll.
+      */}
+      <main className="flex-1 flex flex-col bg-background overflow-hidden">
         {children}
       </main>
     </div>

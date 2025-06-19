@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState, useRef, useEffect, type FormEvent } from 'react';
@@ -5,7 +6,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Paperclip, Send, User, Bot } from 'lucide-react';
+import { Paperclip, Send, User, Bot, PanelLeftOpen } from 'lucide-react';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '../ui/card';
 
 interface Message {
@@ -18,10 +19,12 @@ interface Message {
 interface ChatInterfaceProps {
   chatTitle?: string;
   initialMessages?: Message[];
-  onSendMessage?: (messageText: string) => Promise<string | null>; // Returns AI response or null for mock
+  onSendMessage?: (messageText: string) => Promise<string | null>;
   userAvatarSrc?: string;
   aiAvatarSrc?: string;
   placeholder?: string;
+  toggleDesktopSidebar?: () => void; // For desktop sidebar toggle
+  isMobile: boolean; // To conditionally show mobile-specific toggle
 }
 
 export function ChatInterface({
@@ -30,7 +33,9 @@ export function ChatInterface({
   onSendMessage,
   userAvatarSrc,
   aiAvatarSrc,
-  placeholder = "Type your message..."
+  placeholder = "Type your message...",
+  toggleDesktopSidebar,
+  isMobile,
 }: ChatInterfaceProps) {
   const [messages, setMessages] = useState<Message[]>(initialMessages);
   const [inputValue, setInputValue] = useState('');
@@ -69,28 +74,32 @@ export function ChatInterface({
         setMessages((prevMessages) => [...prevMessages, aiMessage]);
       }
     } else {
-      // Mock AI response
       setTimeout(() => {
         const aiMockMessage: Message = {
           id: Date.now().toString() + '-ai',
-          text: `I received your message: "${userMessage.text}". I'm a mock AI, so I can't really process this.`,
+          text: `I received your message: "${userMessage.text}". I'm a mock AI.`,
           sender: 'ai',
           timestamp: new Date(),
         };
         setMessages((prevMessages) => [...prevMessages, aiMockMessage]);
         setIsLoading(false);
       }, 1500);
-      return; // isLoading will be set to false in timeout
+      return; 
     }
     setIsLoading(false);
   };
   
-  const getInitials = (name: string) => name.substring(0, 2).toUpperCase();
-
   return (
-    <Card className="w-full h-[calc(100vh-10rem)] md:h-[calc(100vh-12rem)] flex flex-col shadow-xl rounded-xl overflow-hidden">
-      <CardHeader className="border-b">
-        <CardTitle className="font-headline text-xl">{chatTitle}</CardTitle>
+    <Card className="w-full h-full flex flex-col shadow-xl rounded-xl overflow-hidden">
+      <CardHeader className="border-b flex flex-row items-center justify-between">
+        <div className="flex items-center gap-2">
+          {!isMobile && toggleDesktopSidebar && (
+            <Button variant="ghost" size="icon" onClick={toggleDesktopSidebar} aria-label="Toggle chat history">
+              <PanelLeftOpen className="h-5 w-5" />
+            </Button>
+          )}
+          <CardTitle className="font-headline text-xl">{chatTitle}</CardTitle>
+        </div>
       </CardHeader>
       <CardContent className="flex-grow p-0 overflow-hidden">
         <ScrollArea className="h-full p-4" ref={scrollAreaRef}>
