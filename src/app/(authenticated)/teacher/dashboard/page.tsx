@@ -1,3 +1,6 @@
+// src/app/(authenticated)/teacher/dashboard/page.tsx
+"use client";
+
 import { DashboardMetricCard } from "@/components/shared/DashboardMetricCard";
 import { FeaturePage } from "@/components/shared/FeaturePage";
 import { BarChart, Users, FileCheck, TrendingUp, Presentation, LayoutDashboard } from "lucide-react";
@@ -8,7 +11,7 @@ import {
   ChartTooltipContent,
   ChartLegend,
   ChartLegendContent,
-  ChartConfig
+  type ChartConfig
 } from "@/components/ui/chart";
 import { Bar, ResponsiveContainer, XAxis, YAxis, CartesianGrid, Pie, PieChart, Cell } from "recharts";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -143,4 +146,3 @@ export default function TeacherDashboardPage() {
     </FeaturePage>
   );
 }
-
