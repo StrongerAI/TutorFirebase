@@ -1,6 +1,7 @@
+
 import React from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Sparkles } from 'lucide-react'; // Added import for Sparkles
+import { Sparkles } from 'lucide-react';
 
 interface FeaturePageProps {
   title: string;
@@ -34,7 +35,6 @@ export function FeaturePage({ title, description, icon: Icon, children, classNam
   );
 }
 
-// More specific variant for GenAI features with a standard Card structure
 interface GenAiFeaturePageProps {
   title: string;
   description: string;
@@ -59,7 +59,7 @@ export function GenAiFeaturePage({ title, description, icon: Icon, formComponent
           </div>
         </CardHeader>
         <CardContent className="p-6">
-          <div className="grid gap-6 lg:grid-cols-2 lg:gap-8">
+          <div className="flex flex-col gap-8"> {/* Changed from grid to flex-col */}
             <div>
               {formComponent}
             </div>
