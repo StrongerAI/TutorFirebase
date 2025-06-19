@@ -1,3 +1,5 @@
+"use client";
+
 import { ChatInterface } from '@/components/shared/ChatInterface';
 import { MessageCircle } from 'lucide-react'; // Import icon
 import { FeaturePage } from '@/components/shared/FeaturePage';
