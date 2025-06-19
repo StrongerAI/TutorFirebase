@@ -4,7 +4,9 @@
 import { ChatInterface } from '@/components/shared/ChatInterface';
 import { ChatHistorySidebar } from '@/components/shared/ChatHistorySidebar';
 import { useState, useEffect } from 'react';
-import { useIsMobile } from '@/hooks/use-mobile'; // Assuming you have a hook like this
+import { useIsMobile } from '@/hooks/use-mobile';
+import { summarizeChatTitle } from '@/ai/flows/summarize-chat-title-flow';
+import { useToast } from '@/hooks/use-toast';
 
 // Mock data for chat threads
 const mockThreads = [
@@ -17,12 +19,39 @@ export default function StudentAiChatPage() {
   const [selectedThreadId, setSelectedThreadId] = useState<string | undefined>(mockThreads[0]?.id);
   const [threads, setThreads] = useState(mockThreads);
   const [isDesktopSidebarOpen, setIsDesktopSidebarOpen] = useState(true);
-  const isMobile = useIsMobile(); // Hook to detect mobile screen size
+  const isMobile = useIsMobile();
+  const { toast } = useToast();
 
   const handleStudentMessage = async (messageText: string): Promise<string> => {
+    const currentThread = threads.find(t => t.id === selectedThreadId);
+    const shouldAttemptTitleUpdate = currentThread && currentThread.title === 'New Chat' && selectedThreadId;
+
+    // Mock AI response
     await new Promise(resolve => setTimeout(resolve, 1000 + Math.random() * 1000));
-    // Here you would interact with your actual AI service based on selectedThreadId if needed
-    return `Student AI: You asked about "${messageText}" in thread "${selectedThreadId}". How can I help?`;
+    const aiResponseText = `Student AI: You asked about "${messageText}" in thread "${selectedThreadId}". How can I help?`;
+
+    if (shouldAttemptTitleUpdate) {
+      try {
+        const conversationStart = `User: ${messageText}\nAI: ${aiResponseText}`;
+        const summaryResult = await summarizeChatTitle({ conversationSnippet: conversationStart });
+        if (summaryResult.title) {
+          setThreads(prevThreads =>
+            prevThreads.map(thread =>
+              thread.id === selectedThreadId ? { ...thread, title: summaryResult.title, lastActivity: 'Just now' } : thread
+            )
+          );
+        }
+      } catch (error) {
+        console.error("Failed to summarize chat title:", error);
+        toast({
+          title: "Error Summarizing Title",
+          description: "Could not automatically generate a title for this chat.",
+          variant: "destructive",
+        });
+        // Keep "New Chat" title or implement other fallback
+      }
+    }
+    return aiResponseText;
   };
 
   const handleSelectThread = (threadId: string) => {
@@ -76,11 +105,6 @@ export default function StudentAiChatPage() {
         isMobile={isMobile}
       />
       <main className="flex-1 flex flex-col p-0 overflow-y-auto bg-transparent">
-        {/*
-          The ChatInterface itself is a Card, so it will have its own background.
-          The parent 'main' can be transparent or match page background.
-          The p-0 is to ensure ChatInterface Card can span full width/height of this flex item.
-        */}
         <ChatInterface 
           onSendMessage={handleStudentMessage} 
           chatTitle="Student AI Learning Assistant"
