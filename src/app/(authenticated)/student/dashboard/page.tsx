@@ -1,6 +1,9 @@
+// src/app/(authenticated)/student/dashboard/page.tsx
+"use client";
+
 import { DashboardMetricCard } from "@/components/shared/DashboardMetricCard";
 import { FeaturePage } from "@/components/shared/FeaturePage";
-import { BarChart, BookOpen, TrendingUp, Activity, LayoutDashboard, CheckCircle } from "lucide-react";
+import { BookOpen, TrendingUp, Activity, LayoutDashboard, CheckCircle } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   ChartContainer,
@@ -8,9 +11,9 @@ import {
   ChartTooltipContent,
   ChartLegend,
   ChartLegendContent,
-  ChartConfig
+  type ChartConfig
 } from "@/components/ui/chart";
-import { Bar, ResponsiveContainer, XAxis, YAxis, CartesianGrid, Pie, PieChart, Cell } from "recharts";
+import { Bar, BarChart, ResponsiveContainer, XAxis, YAxis, CartesianGrid, Pie, PieChart, Cell } from "recharts";
 import Image from "next/image";
 
 const chartData = [
