@@ -3,7 +3,7 @@
 
 import { DashboardMetricCard } from "@/components/shared/DashboardMetricCard";
 import { FeaturePage } from "@/components/shared/FeaturePage";
-import { BarChart, Users, FileCheck, TrendingUp, Presentation, LayoutDashboard } from "lucide-react";
+import { Users, FileCheck, Presentation, LayoutDashboard } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import {
   ChartContainer,
@@ -13,7 +13,7 @@ import {
   ChartLegendContent,
   type ChartConfig
 } from "@/components/ui/chart";
-import { Bar, ResponsiveContainer, XAxis, YAxis, CartesianGrid, Pie, PieChart, Cell } from "recharts";
+import { Bar, BarChart, Pie, PieChart, Cell, XAxis, YAxis, CartesianGrid } from "recharts";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 const chartData = [
@@ -72,7 +72,6 @@ export default function TeacherDashboardPage() {
           </CardHeader>
           <CardContent className="pl-2">
             <ChartContainer config={chartConfig} className="h-[300px] w-full">
-              <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={chartData} accessibilityLayer>
                   <CartesianGrid vertical={false} />
                   <XAxis
@@ -87,7 +86,6 @@ export default function TeacherDashboardPage() {
                   <Bar dataKey="avgScore" fill="var(--color-avgScore)" radius={4} />
                   <Bar dataKey="participation" fill="var(--color-participation)" radius={4} />
                 </BarChart>
-              </ResponsiveContainer>
             </ChartContainer>
           </CardContent>
         </Card>
@@ -98,17 +96,15 @@ export default function TeacherDashboardPage() {
           </CardHeader>
           <CardContent>
             <ChartContainer config={chartConfig} className="h-[300px] w-full">
-                <ResponsiveContainer width="100%" height="100%">
-                    <PieChart accessibilityLayer>
-                        <Pie data={gradingStatusData} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={80} label>
-                             {gradingStatusData.map((entry, index) => (
-                                <Cell key={`cell-${index}`} fill={entry.fill} />
-                            ))}
-                        </Pie>
-                        <ChartTooltip content={<ChartTooltipContent />} />
-                        <ChartLegend content={<ChartLegendContent />} />
-                    </PieChart>
-                </ResponsiveContainer>
+                <PieChart accessibilityLayer>
+                    <Pie data={gradingStatusData} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={80} label>
+                         {gradingStatusData.map((entry, index) => (
+                            <Cell key={`cell-${index}`} fill={entry.fill} />
+                        ))}
+                    </Pie>
+                    <ChartTooltip content={<ChartTooltipContent />} />
+                    <ChartLegend content={<ChartLegendContent />} />
+                </PieChart>
             </ChartContainer>
           </CardContent>
         </Card>
