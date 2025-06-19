@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState } from 'react';
@@ -10,14 +11,14 @@ import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { useToast } from '@/hooks/use-toast';
-import { HelpCircle, BookOpen, Lightbulb, Sparkles, Loader2, Info } from 'lucide-react';
+import { HelpCircle, BookOpen, Lightbulb, Sparkles, Loader2, Info, Tag } from 'lucide-react';
 import { z } from 'zod';
 import { GenAiFeaturePage } from '@/components/shared/FeaturePage';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 
 const AssignmentHelpInputClientSchema = z.object({
   assignmentDetails: z.string().min(30, { message: "Please provide detailed information about your assignment (min 30 characters)." }),
   studentLevel: z.string({ required_error: "Please select your student level." }),
+  subject: z.string().optional(),
   specificQuestion: z.string().optional(),
 });
 
@@ -30,7 +31,8 @@ export function AssignmentHelpClient() {
     resolver: zodResolver(AssignmentHelpInputClientSchema),
     defaultValues: {
       assignmentDetails: '',
-      studentLevel: undefined, // Or a default value like 'high_school'
+      studentLevel: undefined,
+      subject: '',
       specificQuestion: '',
     },
   });
@@ -81,30 +83,49 @@ export function AssignmentHelpClient() {
             </FormItem>
           )}
         />
-        <FormField
-          control={form.control}
-          name="studentLevel"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel className="text-lg">Your Student Level</FormLabel>
-              <Select onValueChange={field.onChange} defaultValue={field.value}>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <FormField
+            control={form.control}
+            name="studentLevel"
+            render={({ field }) => (
+                <FormItem>
+                <FormLabel className="text-lg">Your Student Level</FormLabel>
+                <Select onValueChange={field.onChange} defaultValue={field.value}>
+                    <FormControl>
+                    <SelectTrigger className="text-base">
+                        <SelectValue placeholder="Select your academic level" />
+                    </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                    {studentLevels.map(level => (
+                        <SelectItem key={level.value} value={level.value} className="text-base">
+                        {level.label}
+                        </SelectItem>
+                    ))}
+                    </SelectContent>
+                </Select>
+                <FormMessage />
+                </FormItem>
+            )}
+            />
+            <FormField
+            control={form.control}
+            name="subject"
+            render={({ field }) => (
+                <FormItem>
+                <FormLabel className="text-lg flex items-center gap-2"><Tag className="w-5 h-5 text-primary"/>Subject/Topic (Optional)</FormLabel>
                 <FormControl>
-                  <SelectTrigger className="text-base">
-                    <SelectValue placeholder="Select your academic level" />
-                  </SelectTrigger>
+                    <Input
+                    placeholder="e.g., Calculus, World History"
+                    className="text-base"
+                    {...field}
+                    />
                 </FormControl>
-                <SelectContent>
-                  {studentLevels.map(level => (
-                    <SelectItem key={level.value} value={level.value} className="text-base">
-                      {level.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+                <FormMessage />
+                </FormItem>
+            )}
+            />
+        </div>
         <FormField
           control={form.control}
           name="specificQuestion"
@@ -161,7 +182,7 @@ export function AssignmentHelpClient() {
   return (
     <GenAiFeaturePage
       title="AI Assignment Helper"
-      description="Get explanations, suggestions, and guidance for your assignments."
+      description="Get explanations, suggestions, and guidance for your assignments. Now with subject-specific help!"
       icon={HelpCircle}
       formComponent={formComponent}
       resultComponent={resultComponent}
@@ -169,4 +190,3 @@ export function AssignmentHelpClient() {
     />
   );
 }
-

@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState } from 'react';
@@ -6,17 +7,31 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { careerCoach, type CareerCoachInput, type CareerCoachOutput } from '@/ai/flows/career-coach';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
+import { Input } from '@/components/ui/input';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
-import { Briefcase, Brain, Sparkles, Loader2 } from 'lucide-react';
+import { Briefcase, Layers, Heart, Building, Target, Users, Sparkles, Loader2, ChevronsRight } from 'lucide-react';
 import { z } from 'zod';
 import { GenAiFeaturePage } from '@/components/shared/FeaturePage';
 
-// Re-define schema for client-side validation consistency if needed, or import if identical
 const CareerCoachInputClientSchema = z.object({
-  skillsAndInterests: z.string().min(20, { message: "Please describe your skills and interests in at least 20 characters." }),
+  currentSkills: z.string().min(20, { message: "Please describe your current skills (min 20 characters)." }),
+  interests: z.string().min(10, { message: "Please describe your interests (min 10 characters)." }),
+  workExperience: z.string().optional(),
+  careerAspirations: z.string().min(10, { message: "Please describe your career aspirations (min 10 characters)." }),
+  preferredWorkEnvironment: z.string().optional(),
 });
+
+const workEnvironmentOptions = [
+    { value: "fast_paced_startup", label: "Fast-paced Startup" },
+    { value: "stable_corporate", label: "Stable Corporate" },
+    { value: "remote_first", label: "Remote-first" },
+    { value: "highly_collaborative", label: "Highly Collaborative Team" },
+    { value: "independent_research", label: "Independent/Research-oriented" },
+    { value: "flexible_hybrid", label: "Flexible Hybrid" },
+    { value: "no_preference", label: "No Strong Preference" },
+];
 
 export function CareerCoachClient() {
   const [result, setResult] = useState<CareerCoachOutput | null>(null);
@@ -26,7 +41,11 @@ export function CareerCoachClient() {
   const form = useForm<CareerCoachInput>({
     resolver: zodResolver(CareerCoachInputClientSchema),
     defaultValues: {
-      skillsAndInterests: '',
+      currentSkills: '',
+      interests: '',
+      workExperience: '',
+      careerAspirations: '',
+      preferredWorkEnvironment: undefined,
     },
   });
 
@@ -53,18 +72,93 @@ export function CareerCoachClient() {
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
         <FormField
           control={form.control}
-          name="skillsAndInterests"
+          name="currentSkills"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="text-lg flex items-center gap-2"><Brain className="w-5 h-5 text-primary" />Your Skills and Interests</FormLabel>
+              <FormLabel className="text-lg flex items-center gap-2"><Layers className="w-5 h-5 text-primary" />Your Current Skills</FormLabel>
               <FormControl>
                 <Textarea
-                  placeholder="e.g., Passionate about coding, love solving complex problems, enjoy creative writing and teamwork..."
-                  className="min-h-[150px] text-base"
+                  placeholder="e.g., Python programming, data analysis, project management, public speaking..."
+                  className="min-h-[100px] text-base"
                   {...field}
                 />
               </FormControl>
               <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="interests"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel className="text-lg flex items-center gap-2"><Heart className="w-5 h-5 text-primary" />Your Interests & Passions</FormLabel>
+              <FormControl>
+                <Textarea
+                  placeholder="e.g., Artificial intelligence, creative writing, solving environmental problems, video games..."
+                  className="min-h-[100px] text-base"
+                  {...field}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="workExperience"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel className="text-lg flex items-center gap-2"><Building className="w-5 h-5 text-primary" />Work Experience (Optional)</FormLabel>
+              <FormControl>
+                <Textarea
+                  placeholder="Briefly describe your relevant past roles or projects."
+                  className="min-h-[80px] text-base"
+                  {...field}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="careerAspirations"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel className="text-lg flex items-center gap-2"><Target className="w-5 h-5 text-primary" />Career Aspirations</FormLabel>
+              <FormControl>
+                <Textarea
+                  placeholder="What are your long-term career goals? What kind of impact do you want to make?"
+                  className="min-h-[100px] text-base"
+                  {...field}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="preferredWorkEnvironment"
+          render={({ field }) => (
+            <FormItem>
+                <FormLabel className="text-lg flex items-center gap-2"><Users className="w-5 h-5 text-primary"/>Preferred Work Environment (Optional)</FormLabel>
+                <Select onValueChange={field.onChange} defaultValue={field.value}>
+                    <FormControl>
+                    <SelectTrigger className="text-base">
+                        <SelectValue placeholder="Select your preferred environment" />
+                    </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                    {workEnvironmentOptions.map(option => (
+                        <SelectItem key={option.value} value={option.value} className="text-base">
+                        {option.label}
+                        </SelectItem>
+                    ))}
+                    </SelectContent>
+                </Select>
+                <FormMessage />
             </FormItem>
           )}
         />
@@ -90,13 +184,19 @@ export function CareerCoachClient() {
       <div>
         <h3 className="text-xl font-semibold mb-2 font-headline flex items-center gap-2"><Briefcase className="w-6 h-6 text-primary" />Suggested Career Paths</h3>
         <ul className="list-disc list-inside space-y-1 text-card-foreground/90 bg-primary/5 p-4 rounded-md">
-          {result.suggestedCareerPaths.split('\n').map((path, index) => path.trim() && <li key={index}>{path.replace(/^- /, '')}</li>)}
+          {result.suggestedCareerPaths.split('\n').map((path, index) => path.trim() && !path.startsWith("###") && <li key={index}>{path.replace(/^- /, '')}</li>)}
         </ul>
       </div>
       <div>
-        <h3 className="text-xl font-semibold mb-2 font-headline flex items-center gap-2"><Brain className="w-6 h-6 text-primary"/>Skills to Develop</h3>
+        <h3 className="text-xl font-semibold mb-2 font-headline flex items-center gap-2"><Layers className="w-6 h-6 text-primary"/>Skills to Develop</h3>
         <ul className="list-disc list-inside space-y-1 text-card-foreground/90 bg-primary/5 p-4 rounded-md">
-          {result.skillsToDevelop.split('\n').map((skill, index) => skill.trim() && <li key={index}>{skill.replace(/^- /, '')}</li>)}
+          {result.skillsToDevelop.split('\n').map((skill, index) => skill.trim() && !skill.startsWith("###") && <li key={index}>{skill.replace(/^- /, '')}</li>)}
+        </ul>
+      </div>
+       <div>
+        <h3 className="text-xl font-semibold mb-2 font-headline flex items-center gap-2"><ChevronsRight className="w-6 h-6 text-primary"/>Actionable Next Steps</h3>
+        <ul className="list-disc list-inside space-y-1 text-card-foreground/90 bg-primary/5 p-4 rounded-md">
+          {result.actionableSteps.split('\n').map((step, index) => step.trim() && !step.startsWith("###") && <li key={index}>{step.replace(/^- /, '')}</li>)}
         </ul>
       </div>
     </div>
@@ -105,7 +205,7 @@ export function CareerCoachClient() {
   return (
     <GenAiFeaturePage
       title="AI Career Coach"
-      description="Discover career paths and skills tailored to your interests. Let our AI guide you!"
+      description="Discover career paths and skills tailored to your interests and aspirations. Let our AI guide you with actionable steps!"
       icon={Briefcase}
       formComponent={formComponent}
       resultComponent={resultComponent}

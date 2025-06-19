@@ -1,3 +1,4 @@
+
 // src/ai/flows/assignment-help.ts
 'use server';
 /**
@@ -18,12 +19,16 @@ const AssignmentHelpInputSchema = z.object({
   studentLevel: z
     .string()
     .describe('The student level (e.g., high school, undergraduate, graduate).'),
+  subject: z
+    .string()
+    .optional()
+    .describe('The subject or topic of the assignment (e.g., Calculus, World History, Java Programming).'),
   specificQuestion: z.string().optional().describe('A specific question the student has about the assignment.'),
 });
 export type AssignmentHelpInput = z.infer<typeof AssignmentHelpInputSchema>;
 
 const AssignmentHelpOutputSchema = z.object({
-  explanation: z.string().describe('An explanation of the relevant concepts or problems.'),
+  explanation: z.string().describe('An explanation of the relevant concepts or problems, tailored to the subject if provided.'),
   suggestions: z.string().describe('Suggestions and guidance for completing the assignment.'),
   hint: z.string().optional().describe('A helpful hint to guide the student if they are stuck.'),
 });
@@ -39,16 +44,17 @@ const prompt = ai.definePrompt({
   output: {schema: AssignmentHelpOutputSchema},
   prompt: `You are an AI-powered assignment assistant designed to help students with their assignments.
 
-You will analyze the assignment details and the student's level to provide helpful explanations, suggestions, and guidance.
+You will analyze the assignment details, the student's level, and the subject (if provided) to provide helpful explanations, suggestions, and guidance.
 If the student has a specific question, you will address it directly.
 
 Consider offering hints if the student seems stuck, but don't give away the answer directly.
 
 Assignment Details: {{{assignmentDetails}}}
 Student Level: {{{studentLevel}}}
+Subject: {{{subject}}}
 Specific Question: {{{specificQuestion}}}
 
-Explanation: An explanation of the relevant concepts or problems.
+Explanation: An explanation of the relevant concepts or problems. If a subject is provided, tailor the explanation to that subject.
 Suggestions: Suggestions and guidance for completing the assignment.
 Hint: A helpful hint to guide the student if they are stuck.
 `,

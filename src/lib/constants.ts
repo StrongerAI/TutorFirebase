@@ -1,3 +1,4 @@
+
 import type { NavItem } from '@/types';
 import {
   LayoutDashboard,
@@ -12,9 +13,10 @@ import {
   Lightbulb,
   Settings,
   Briefcase,
-  Brain,
+  Brain, // Keep Brain for consistency if used elsewhere, or change if Skills Guide needs a new icon
   ListChecks,
   PenTool,
+  Zap, // Example for Skills Guide icon, or choose another relevant one
 } from 'lucide-react';
 
 export const APP_NAME = "TutorTrack.ai";
@@ -22,7 +24,7 @@ export const APP_NAME = "TutorTrack.ai";
 export const STUDENT_NAV_ITEMS: NavItem[] = [
   { href: '/student/dashboard', label: 'Dashboard', icon: LayoutDashboard },
   { href: '/student/career-coach', label: 'Career Coach', icon: Briefcase },
-  { href: '/student/skills-development', label: 'Skills Development', icon: Brain },
+  { href: '/student/skills-guide', label: 'Skills Guide', icon: Zap }, // Updated Label and potentially icon
   { href: '/student/assignment-help', label: 'Assignment Help', icon: HelpCircle },
   { href: '/student/ai-chat', label: 'AI Chat', icon: MessageCircle },
   { href: '/student/projects', label: 'Collaborative Projects', icon: Users },
