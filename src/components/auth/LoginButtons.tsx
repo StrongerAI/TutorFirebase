@@ -30,7 +30,7 @@ export function LoginButtons() {
   ];
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-br from-primary/20 via-background to-accent/20 p-4">
+    <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-br from-[hsl(var(--primary)_/_0.6)] via-[hsl(var(--accent)_/_0.4)] to-[hsl(var(--primary)_/_0.3)] p-4">
       <Card className="w-full max-w-xl shadow-2xl rounded-2xl overflow-hidden bg-card">
         <CardHeader className="text-center p-8 md:p-12 bg-primary/5">
           <Image
@@ -98,7 +98,7 @@ export function LoginButtons() {
           </div>
         </CardContent>
       </Card>
-      <footer className="mt-12 text-center text-muted-foreground pb-8">
+      <footer className="mt-12 text-center text-white/80 pb-8">
         <p>&copy; {new Date().getFullYear()} {APP_NAME}. All rights reserved.</p>
         <p className="text-sm">Empowering learning through innovation.</p>
       </footer>
