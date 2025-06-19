@@ -33,7 +33,6 @@ export function AppHeader() {
           <SheetContent side="left" className="flex flex-col p-0 w-[280px] bg-card">
             <Link href={homePath} className="flex items-center gap-3 text-lg font-semibold p-4 border-b">
                 <Image src="https://placehold.co/32x32/9775FA/FFFFFF.png?text=TT" alt={`${APP_NAME} Logo`} width={32} height={32} className="rounded-md" data-ai-hint="logo education" />
-                <span className="font-headline">{APP_NAME}</span>
             </Link>
             <nav className="grid gap-1 p-4">
                 {navItems.map((item) => (
@@ -59,7 +58,6 @@ export function AppHeader() {
         </Sheet>
         <Link href={homePath} className="hidden md:flex items-center gap-2">
             <Image src="https://placehold.co/32x32/9775FA/FFFFFF.png?text=TT" alt={`${APP_NAME} Logo`} width={28} height={28} className="rounded-md" data-ai-hint="logo education" />
-            <span className="font-headline text-xl font-semibold text-primary">{APP_NAME}</span>
         </Link>
       </div>
 
