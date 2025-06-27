@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   Dialog,
   DialogContent,
@@ -33,6 +33,8 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { Label } from '@/components/ui/label';
 
 interface AuthDialogProps {
   isOpen: boolean;
@@ -48,10 +50,15 @@ const authFormSchema = z.object({
     .min(6, { message: 'Password must be at least 6 characters long.' }),
 });
 
-export function AuthDialog({ isOpen, onOpenChange, role, defaultTab }: AuthDialogProps) {
+export function AuthDialog({ isOpen, onOpenChange, role: initialRole, defaultTab }: AuthDialogProps) {
   const { toast } = useToast();
   const { setRoleForUser } = useUserRole();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [dialogRole, setDialogRole] = useState<UserRole>(initialRole);
+
+  useEffect(() => {
+    setDialogRole(initialRole);
+  }, [initialRole, isOpen]);
 
   const form = useForm<z.infer<typeof authFormSchema>>({
     resolver: zodResolver(authFormSchema),
@@ -64,7 +71,7 @@ export function AuthDialog({ isOpen, onOpenChange, role, defaultTab }: AuthDialo
   const handleEmailPasswordSignUp = async (
     values: z.infer<typeof authFormSchema>
   ) => {
-    if (!role) {
+    if (!dialogRole) {
         toast({ title: 'Role not selected', description: 'Please select a role before signing up.', variant: 'destructive'});
         return;
     }
@@ -75,7 +82,7 @@ export function AuthDialog({ isOpen, onOpenChange, role, defaultTab }: AuthDialo
         values.email,
         values.password
       );
-      setRoleForUser(userCredential.user.uid, role);
+      setRoleForUser(userCredential.user.uid, dialogRole);
       toast({ title: 'Account Created!', description: 'Welcome! Redirecting you to your dashboard.' });
       onOpenChange(false);
     } catch (error: any) {
@@ -113,7 +120,7 @@ export function AuthDialog({ isOpen, onOpenChange, role, defaultTab }: AuthDialo
   };
   
   const handleGoogleSignIn = async () => {
-    if (!role) {
+    if (!dialogRole) {
         toast({ title: 'Role not selected', description: 'Please select a role before signing in with Google.', variant: 'destructive'});
         return;
     }
@@ -123,7 +130,7 @@ export function AuthDialog({ isOpen, onOpenChange, role, defaultTab }: AuthDialo
         const result = await signInWithPopup(auth, provider);
         const isNewUser = result.user.metadata.creationTime === result.user.metadata.lastSignInTime;
         if(isNewUser) {
-            setRoleForUser(result.user.uid, role);
+            setRoleForUser(result.user.uid, dialogRole);
         }
         toast({ title: 'Signed In with Google!', description: 'Welcome! Redirecting you to your dashboard.' });
         onOpenChange(false);
@@ -184,11 +191,37 @@ export function AuthDialog({ isOpen, onOpenChange, role, defaultTab }: AuthDialo
     }}>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>Welcome{role ? ` to the ${role} portal` : ''}</DialogTitle>
+          <DialogTitle>Welcome{dialogRole ? ` as a ${dialogRole}` : ''}</DialogTitle>
           <DialogDescription>
-            {role ? `Sign up or sign in as a ${role}.` : 'Sign in or create an account to get started.'}
+            {initialRole ? `Sign up or sign in as a ${initialRole}.` : 'Please select your role to continue.'}
           </DialogDescription>
         </DialogHeader>
+
+        {!initialRole && (
+          <RadioGroup
+            value={dialogRole || ''}
+            onValueChange={(value) => setDialogRole(value as UserRole)}
+            className="flex space-x-4 pt-2 pb-4"
+          >
+            <FormItem className="flex items-center space-x-2 space-y-0">
+              <FormControl>
+                <RadioGroupItem value="student" id="role-student-dialog" />
+              </FormControl>
+              <Label htmlFor="role-student-dialog" className="font-normal cursor-pointer">
+                I'm a Student
+              </Label>
+            </FormItem>
+            <FormItem className="flex items-center space-x-2 space-y-0">
+              <FormControl>
+                <RadioGroupItem value="teacher" id="role-teacher-dialog" />
+              </FormControl>
+               <Label htmlFor="role-teacher-dialog" className="font-normal cursor-pointer">
+                I'm a Teacher
+              </Label>
+            </FormItem>
+          </RadioGroup>
+        )}
+
         <Tabs defaultValue={defaultTab || 'signin'} className="w-full">
             <TabsList className="grid w-full grid-cols-2">
                 <TabsTrigger value="signin">Sign In</TabsTrigger>
