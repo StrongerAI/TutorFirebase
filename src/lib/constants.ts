@@ -13,6 +13,7 @@ import {
   PenTool,
   FileSignature,
   ClipboardList,
+  ClipboardCheck,
 } from 'lucide-react';
 
 export const APP_NAME = "TutorTrack.ai";
@@ -25,6 +26,7 @@ export const STUDENT_NAV_ITEMS: NavItem[] = [
     children: [
       { href: '/student/assignment-help', label: 'Assignment Help', icon: HelpCircle },
       { href: '/student/recommendations', label: 'Recommendations', icon: Lightbulb },
+      { href: '/student/practice-quizzes', label: 'Practice Quizzes', icon: ClipboardCheck },
     ],
   },
   {
