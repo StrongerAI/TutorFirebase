@@ -28,13 +28,3 @@ export interface Project {
   status: 'Active' | 'Completed' | 'Planning';
   lastUpdated: string;
 }
-
-// For Personalized Recommendations
-export interface Recommendation {
-  id: string;
-  title: string;
-  type: 'Course' | 'Book' | 'Article' | 'Video';
-  source: string; // e.g., Coursera, YouTube
-  url: string;
-  description?: string;
-}
