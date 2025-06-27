@@ -17,7 +17,7 @@ export function AppHeader() {
   const pathname = usePathname();
 
   const navItems: NavItem[] = role === 'student' ? STUDENT_NAV_ITEMS : TEACHER_NAV_ITEMS;
-  const homePath = role === 'student' ? '/student/dashboard' : '/teacher/dashboard';
+  const homePath = '/';
 
   const NavLink = ({ item }: { item: NavItem }) => {
     const isActive = item.href && pathname.startsWith(item.href);
