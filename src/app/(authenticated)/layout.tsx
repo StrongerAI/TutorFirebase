@@ -12,16 +12,16 @@ export default function AuthenticatedLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const { role, isLoading } = useUserRole();
+  const { user, role, isLoading } = useUserRole();
   const router = useRouter();
 
   useEffect(() => {
-    if (!isLoading && !role) {
+    if (!isLoading && (!user || !role)) {
       router.replace('/');
     }
-  }, [role, isLoading, router]);
+  }, [user, role, isLoading, router]);
 
-  if (isLoading || !role) {
+  if (isLoading || !user || !role) {
     return (
       <div className="flex items-center justify-center h-screen bg-background">
         <div className="space-y-4 p-8 rounded-lg shadow-lg bg-card">
