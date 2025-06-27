@@ -2,7 +2,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { APP_NAME, STUDENT_NAV_ITEMS, TEACHER_NAV_ITEMS } from "@/lib/constants";
 import { useUserRole } from "@/hooks/useUserRole";
@@ -31,6 +31,9 @@ export function AppHeader() {
             </Button>
           </SheetTrigger>
           <SheetContent side="left" className="flex flex-col p-0 w-[280px] bg-card">
+            <SheetHeader className="p-0">
+              <SheetTitle className="sr-only">Main Navigation</SheetTitle>
+            </SheetHeader>
             <Link href={homePath} className="flex items-center gap-3 text-lg font-semibold p-4 border-b">
                 <Image src="https://placehold.co/32x32/9775FA/FFFFFF.png?text=TT" alt={`${APP_NAME} Logo`} width={32} height={32} className="rounded-md" data-ai-hint="logo education" />
             </Link>
