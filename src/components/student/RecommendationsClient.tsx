@@ -3,18 +3,17 @@
 import { useState } from 'react';
 import { useForm, type SubmitHandler } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { generateRecommendations, GenerateRecommendationsInputSchema, type GenerateRecommendationsInput, type GenerateRecommendationsOutput } from '@/ai/flows/recommendations-flow';
+import { generateRecommendations } from '@/ai/flows/recommendations-flow';
+import { GenerateRecommendationsInputSchema, type GenerateRecommendationsInput, type GenerateRecommendationsOutput } from '@/types';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { useToast } from '@/hooks/use-toast';
 import { Lightbulb, BookOpen, Film, Newspaper, ExternalLink, GraduationCap, Sparkles, Loader2, Laptop } from 'lucide-react';
-import { z } from 'zod';
 import { GenAiFeaturePage } from '@/components/shared/FeaturePage';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import Link from 'next/link';
 
 
 const TypeIcon = ({ type }: { type: string }) => {
