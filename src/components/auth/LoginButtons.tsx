@@ -10,6 +10,8 @@ import { APP_NAME } from "@/lib/constants";
 import { useState } from "react";
 import type { UserRole } from "@/types";
 import { AuthDialog } from "./AuthDialog";
+import { useUserRole } from "@/hooks/useUserRole";
+import { useRouter } from "next/navigation";
 
 export function LoginButtons() {
   const [isAuthDialogOpen, setIsAuthDialogOpen] = useState(false);
@@ -17,12 +19,23 @@ export function LoginButtons() {
   const [defaultTab, setDefaultTab] = useState<'signin' | 'signup'>('signin');
   const [authDialogKey, setAuthDialogKey] = useState(Date.now());
 
+  const { setGuestRole } = useUserRole();
+  const router = useRouter();
+
   const handleAuthDialogOpen = (role: UserRole, tab: 'signin' | 'signup' = 'signup') => {
     setSelectedRole(role);
     setDefaultTab(tab);
     setIsAuthDialogOpen(true);
     setAuthDialogKey(Date.now()); // Reset dialog state if it was open before
   };
+
+  const handleGuestPreview = (role: UserRole) => {
+    if (role) {
+      setGuestRole(role);
+      router.push(`/${role}/dashboard`);
+    }
+  };
+
 
   return (
     <>
@@ -63,26 +76,26 @@ export function LoginButtons() {
           <div className="w-full max-w-2xl mx-auto space-y-12">
             <div id="role-selection-area" className="scroll-mt-20">
               <p className="text-center text-muted-foreground text-lg mb-6">
-                Join us! Please select your role to create an account:
+                Take a tour of our features, or create an account to get started:
               </p>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                 <Button
                   variant="default"
                   size="lg"
                   className="w-full py-6 text-lg rounded-lg transform transition-all hover:scale-105 hover:shadow-xl focus:ring-4 focus:ring-primary/50"
-                  onClick={() => handleAuthDialogOpen('student')}
+                  onClick={() => handleGuestPreview('student')}
                 >
                   <GraduationCap className="mr-3 h-7 w-7" />
-                  I'm a Student
+                  Preview as a Student
                 </Button>
                 <Button
                   variant="outline"
                   size="lg"
                   className="w-full py-6 text-lg rounded-lg border-2 border-primary text-primary hover:bg-primary/10 transform transition-all hover:scale-105 hover:shadow-xl focus:ring-4 focus:ring-primary/50"
-                  onClick={() => handleAuthDialogOpen('teacher')}
+                  onClick={() => handleGuestPreview('teacher')}
                 >
                   <Briefcase className="mr-3 h-7 w-7" />
-                  I'm a Teacher
+                  Preview as a Teacher
                 </Button>
               </div>
             </div>

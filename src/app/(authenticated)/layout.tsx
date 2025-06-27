@@ -15,13 +15,10 @@ export default function AuthenticatedLayout({
   const { user, role, isLoading } = useUserRole();
   const router = useRouter();
 
-  useEffect(() => {
-    if (!isLoading && (!user || !role)) {
-      router.replace('/');
-    }
-  }, [user, role, isLoading, router]);
+  // The authentication check has been removed to allow guest access.
+  // The skeleton remains to provide a good loading experience while role is determined.
 
-  if (isLoading || !user || !role) {
+  if (isLoading) {
     return (
       <div className="flex items-center justify-center h-screen bg-background">
         <div className="space-y-4 p-8 rounded-lg shadow-lg bg-card">
