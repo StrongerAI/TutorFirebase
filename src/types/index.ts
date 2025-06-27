@@ -8,7 +8,6 @@ export interface NavItem {
   icon: React.ElementType;
   disabled?: boolean;
   external?: boolean;
-  children?: NavItem[];
 }
 
 export interface QuizQuestion {
@@ -52,3 +51,40 @@ export const GenerateRecommendationsOutputSchema = z.object({
   ).describe('A list of 3-5 personalized recommendations.'),
 });
 export type GenerateRecommendationsOutput = z.infer<typeof GenerateRecommendationsOutputSchema>;
+
+
+// For Resume Builder
+export const ResumeBuilderInputSchema = z.object({
+  fullName: z.string().min(1, 'Full name is required.'),
+  contactInfo: z
+    .string()
+    .min(1, 'Contact information is required.')
+    .describe('User email, phone number, and LinkedIn profile URL.'),
+  workExperience: z
+    .string()
+    .min(1, 'Work experience is required.')
+    .describe('Details about past jobs, roles, responsibilities, and accomplishments.'),
+  education: z
+    .string()
+    .min(1, 'Education details are required.')
+    .describe('Information about degrees, schools, and graduation dates.'),
+  skills: z
+    .string()
+    .min(1, 'Skills are required.')
+    .describe('A list of relevant hard and soft skills.'),
+  jobDescription: z
+    .string()
+    .min(1, 'Target job description is required.')
+    .describe('The full job description for the role the user is applying for.'),
+});
+export type ResumeBuilderInput = z.infer<typeof ResumeBuilderInputSchema>;
+
+export const ResumeBuilderOutputSchema = z.object({
+  resumeContent: z
+    .string()
+    .describe('The fully generated resume content in Markdown format.'),
+  coverLetterContent: z
+    .string()
+    .describe('The fully generated cover letter content in Markdown format.'),
+});
+export type ResumeBuilderOutput = z.infer<typeof ResumeBuilderOutputSchema>;

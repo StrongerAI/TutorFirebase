@@ -16,6 +16,7 @@ import {
   ListChecks,
   PenTool,
   Zap, // Example for Skills Guide icon, or choose another relevant one
+  FileSignature,
 } from 'lucide-react';
 
 export const APP_NAME = "TutorTrack.ai";
@@ -23,6 +24,7 @@ export const APP_NAME = "TutorTrack.ai";
 export const STUDENT_NAV_ITEMS: NavItem[] = [
   { href: '/student/dashboard', label: 'Dashboard', icon: LayoutDashboard },
   { href: '/student/career-coach', label: 'Career Coach', icon: Briefcase },
+  { href: '/student/resume-builder', label: 'Resume Builder', icon: FileSignature },
   { href: '/student/skills-guide', label: 'Skills Guide', icon: Zap }, // Updated Label and potentially icon
   { href: '/student/assignment-help', label: 'Assignment Help', icon: HelpCircle },
   { href: '/student/ai-chat', label: 'AI Chat', icon: MessageCircle },
