@@ -3,11 +3,12 @@ import { z } from 'zod';
 export type UserRole = 'student' | 'teacher' | null;
 
 export interface NavItem {
-  href: string;
+  href?: string;
   label: string;
   icon: React.ElementType;
   disabled?: boolean;
   external?: boolean;
+  children?: NavItem[];
 }
 
 export interface QuizQuestion {
