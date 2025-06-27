@@ -4,7 +4,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { UserRoleProvider } from '@/context/UserRoleContext';
 
 export const metadata: Metadata = {
-  title: 'TutorTrack.ai',
+  title: 'TutorTrack',
   description: 'AI-Powered Tutoring Platform',
 };
 

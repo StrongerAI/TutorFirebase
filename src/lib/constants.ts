@@ -17,7 +17,7 @@ import {
   Search,
 } from 'lucide-react';
 
-export const APP_NAME = "TutorTrack.ai";
+export const APP_NAME = "TutorTrack";
 
 export const STUDENT_NAV_ITEMS: NavItem[] = [
   { href: '/student/dashboard', label: 'Dashboard', icon: LayoutDashboard },
