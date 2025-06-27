@@ -52,7 +52,7 @@ export function LoginButtons() {
 
         <CardHeader className="text-center p-8 md:p-12 bg-primary/5">
           <CardTitle className="text-5xl font-extrabold font-headline text-primary mt-8">
-            {APP_NAME}
+            TutorTrack
           </CardTitle>
           <CardDescription className="text-xl text-muted-foreground mt-3">
             AI-Powered Tutoring Platform
