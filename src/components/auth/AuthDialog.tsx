@@ -203,22 +203,18 @@ export function AuthDialog({ isOpen, onOpenChange, role: initialRole, defaultTab
             onValueChange={(value) => setDialogRole(value as UserRole)}
             className="flex space-x-4 pt-2 pb-4"
           >
-            <FormItem className="flex items-center space-x-2 space-y-0">
-              <FormControl>
-                <RadioGroupItem value="student" id="role-student-dialog" />
-              </FormControl>
+            <div className="flex items-center space-x-2">
+              <RadioGroupItem value="student" id="role-student-dialog" />
               <Label htmlFor="role-student-dialog" className="font-normal cursor-pointer">
                 I'm a Student
               </Label>
-            </FormItem>
-            <FormItem className="flex items-center space-x-2 space-y-0">
-              <FormControl>
-                <RadioGroupItem value="teacher" id="role-teacher-dialog" />
-              </FormControl>
+            </div>
+            <div className="flex items-center space-x-2">
+              <RadioGroupItem value="teacher" id="role-teacher-dialog" />
                <Label htmlFor="role-teacher-dialog" className="font-normal cursor-pointer">
                 I'm a Teacher
               </Label>
-            </FormItem>
+            </div>
           </RadioGroup>
         )}
 
