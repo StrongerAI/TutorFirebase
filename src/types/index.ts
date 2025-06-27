@@ -46,7 +46,7 @@ export const GenerateRecommendationsOutputSchema = z.object({
         .describe(
           'The type of resource (e.g., Article, Video, Interactive Tutorial, Online Course, University Program, Online Bootcamp).'
         ),
-      url: z.string().url().describe('A valid, real, and accessible URL for the resource.'),
+      url: z.string().describe('A valid, real, and accessible URL for the resource.'),
       description: z.string().describe('A brief summary of what the resource covers and why it is being recommended.'),
     })
   ).describe('A list of 3-5 personalized recommendations.'),
@@ -106,7 +106,7 @@ export const ScholarshipFinderOutputSchema = z.object({
             organization: z.string().describe('The name of the organization offering the opportunity.'),
             type: z.string().describe('The type of opportunity (e.g., Scholarship, Internship).'),
             description: z.string().describe('A brief summary of the opportunity, including eligibility and benefits.'),
-            url: z.string().url().describe('A valid, real, and accessible URL for the opportunity.'),
+            url: z.string().describe('A valid, real, and accessible URL for the opportunity.'),
         })
     ).describe('A list of 3-5 relevant opportunities.'),
 });
