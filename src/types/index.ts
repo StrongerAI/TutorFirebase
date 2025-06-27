@@ -89,3 +89,25 @@ export const ResumeBuilderOutputSchema = z.object({
     .describe('The fully generated cover letter content in Markdown format.'),
 });
 export type ResumeBuilderOutput = z.infer<typeof ResumeBuilderOutputSchema>;
+
+// For Scholarship and Internship Finder
+export const ScholarshipFinderInputSchema = z.object({
+  fieldOfStudy: z.string().min(3, 'Field of study is required.'),
+  interests: z.string().min(10, 'Please describe your interests.').describe('User interests and skills.'),
+  opportunityType: z.enum(['scholarship', 'internship']).describe('The type of opportunity to search for.'),
+  location: z.string().optional().describe('Preferred location for internships (e.g., "Remote", "New York, NY").'),
+});
+export type ScholarshipFinderInput = z.infer<typeof ScholarshipFinderInputSchema>;
+
+export const ScholarshipFinderOutputSchema = z.object({
+    opportunities: z.array(
+        z.object({
+            title: z.string().describe('The title of the scholarship or internship.'),
+            organization: z.string().describe('The name of the organization offering the opportunity.'),
+            type: z.string().describe('The type of opportunity (e.g., Scholarship, Internship).'),
+            description: z.string().describe('A brief summary of the opportunity, including eligibility and benefits.'),
+            url: z.string().url().describe('A valid, real, and accessible URL for the opportunity.'),
+        })
+    ).describe('A list of 3-5 relevant opportunities.'),
+});
+export type ScholarshipFinderOutput = z.infer<typeof ScholarshipFinderOutputSchema>;

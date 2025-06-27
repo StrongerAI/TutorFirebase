@@ -14,6 +14,7 @@ import {
   FileSignature,
   ClipboardList,
   ClipboardCheck,
+  Search,
 } from 'lucide-react';
 
 export const APP_NAME = "TutorTrack.ai";
@@ -36,6 +37,7 @@ export const STUDENT_NAV_ITEMS: NavItem[] = [
       { href: '/student/career-coach', label: 'Career Coach', icon: Briefcase },
       { href: '/student/resume-builder', label: 'Resume Builder', icon: FileSignature },
       { href: '/student/skills-guide', label: 'Skills Guide', icon: Zap },
+      { href: '/student/scholarship-finder', label: 'Scholarship Finder', icon: Search },
     ],
   },
   { href: '/student/ai-chat', label: 'AI Chat', icon: MessageCircle },
