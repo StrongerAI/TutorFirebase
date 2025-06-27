@@ -14,7 +14,7 @@ interface FeaturePageProps {
 
 export function FeaturePage({ title, description, icon: Icon, children, className, actionButtons }: FeaturePageProps) {
   return (
-    <div className={`space-y-6 ${className}`}>
+    <div className={`h-full overflow-y-auto p-6 space-y-6 ${className}`}>
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div className="flex items-center gap-3">
           {Icon && <Icon className="h-8 w-8 text-primary" />}
@@ -47,7 +47,7 @@ interface GenAiFeaturePageProps {
 
 export function GenAiFeaturePage({ title, description, icon: Icon, formComponent, resultComponent, isLoading, className }: GenAiFeaturePageProps) {
   return (
-    <div className={`space-y-6 ${className}`}>
+    <div className={`h-full overflow-y-auto p-6 space-y-6 ${className}`}>
       <Card className="shadow-lg rounded-xl overflow-hidden">
         <CardHeader className="bg-muted/30 border-b p-6">
           <div className="flex items-center gap-3">
