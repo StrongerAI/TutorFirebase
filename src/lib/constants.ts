@@ -5,7 +5,6 @@ import {
   GraduationCap,
   MessageCircle,
   FileText,
-  Users,
   BookOpen,
   HelpCircle,
   Sparkles,
@@ -27,7 +26,6 @@ export const STUDENT_NAV_ITEMS: NavItem[] = [
   { href: '/student/skills-guide', label: 'Skills Guide', icon: Zap }, // Updated Label and potentially icon
   { href: '/student/assignment-help', label: 'Assignment Help', icon: HelpCircle },
   { href: '/student/ai-chat', label: 'AI Chat', icon: MessageCircle },
-  { href: '/student/projects', label: 'Collaborative Projects', icon: Users },
   { href: '/student/recommendations', label: 'Recommendations', icon: Lightbulb },
 ];
 

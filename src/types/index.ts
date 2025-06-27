@@ -21,16 +21,6 @@ export interface QuizData {
   quiz: QuizQuestion[];
 }
 
-// For Collaborative Projects
-export interface Project {
-  id: string;
-  title: string;
-  description: string;
-  members: string[]; // User IDs or names
-  status: 'Active' | 'Completed' | 'Planning';
-  lastUpdated: string;
-}
-
 // For Recommendations
 export const GenerateRecommendationsInputSchema = z.object({
   learningGoals: z
