@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState } from 'react';
@@ -67,11 +68,11 @@ export function RecommendationsClient() {
           name="learningGoals"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="text-lg">What do you want to learn?</FormLabel>
+              <FormLabel>What do you want to learn?</FormLabel>
               <FormControl>
                 <Textarea
                   placeholder="e.g., 'I want to learn about quantum computing from scratch' or 'I need to get better at data visualization for my marketing job'."
-                  className="min-h-[100px] text-base"
+                  className="min-h-[100px]"
                   {...field}
                 />
               </FormControl>
@@ -84,11 +85,11 @@ export function RecommendationsClient() {
           name="currentKnowledge"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="text-lg">What do you already know? (Optional)</FormLabel>
+              <FormLabel>What do you already know? (Optional)</FormLabel>
               <FormControl>
                 <Textarea
                   placeholder="e.g., 'I have a basic understanding of Python' or 'I'm a complete beginner'."
-                  className="min-h-[80px] text-base"
+                  className="min-h-[80px]"
                   {...field}
                 />
               </FormControl>
@@ -101,7 +102,7 @@ export function RecommendationsClient() {
           name="recommendationType"
           render={({ field }) => (
             <FormItem className="space-y-3">
-              <FormLabel className="text-lg">What are you looking for?</FormLabel>
+              <FormLabel>What are you looking for?</FormLabel>
               <FormControl>
                 <RadioGroup
                   onValueChange={field.onChange}
@@ -112,7 +113,7 @@ export function RecommendationsClient() {
                     <FormControl>
                       <RadioGroupItem value="web_resources" />
                     </FormControl>
-                    <FormLabel className="font-normal text-base">
+                    <FormLabel className="font-normal">
                       Online Resources (Articles, Videos, Courses)
                     </FormLabel>
                   </FormItem>
@@ -120,7 +121,7 @@ export function RecommendationsClient() {
                     <FormControl>
                       <RadioGroupItem value="education_programs" />
                     </FormControl>
-                    <FormLabel className="font-normal text-base">
+                    <FormLabel className="font-normal">
                       Educational Programs (Degrees, Bootcamps)
                     </FormLabel>
                   </FormItem>

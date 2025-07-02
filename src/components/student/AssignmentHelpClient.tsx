@@ -71,11 +71,11 @@ export function AssignmentHelpClient() {
           name="assignmentDetails"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="text-lg flex items-center gap-2"><Info className="w-5 h-5 text-primary"/>Assignment Details</FormLabel>
+              <FormLabel className="flex items-center gap-2"><Info className="w-5 h-5 text-primary"/>Assignment Details</FormLabel>
               <FormControl>
                 <Textarea
                   placeholder="Describe your assignment, including instructions, context, and specific problems you're facing..."
-                  className="min-h-[120px] text-base"
+                  className="min-h-[120px]"
                   {...field}
                 />
               </FormControl>
@@ -89,16 +89,16 @@ export function AssignmentHelpClient() {
             name="studentLevel"
             render={({ field }) => (
                 <FormItem>
-                <FormLabel className="text-lg">Your Student Level</FormLabel>
+                <FormLabel>Your Student Level</FormLabel>
                 <Select onValueChange={field.onChange} defaultValue={field.value}>
                     <FormControl>
-                    <SelectTrigger className="text-base">
+                    <SelectTrigger>
                         <SelectValue placeholder="Select your academic level" />
                     </SelectTrigger>
                     </FormControl>
                     <SelectContent>
                     {studentLevels.map(level => (
-                        <SelectItem key={level.value} value={level.value} className="text-base">
+                        <SelectItem key={level.value} value={level.value}>
                         {level.label}
                         </SelectItem>
                     ))}
@@ -113,11 +113,10 @@ export function AssignmentHelpClient() {
             name="subject"
             render={({ field }) => (
                 <FormItem>
-                <FormLabel className="text-lg flex items-center gap-2"><Tag className="w-5 h-5 text-primary"/>Subject/Topic (Optional)</FormLabel>
+                <FormLabel className="flex items-center gap-2"><Tag className="w-5 h-5 text-primary"/>Subject/Topic (Optional)</FormLabel>
                 <FormControl>
                     <Input
                     placeholder="e.g., Calculus, World History"
-                    className="text-base"
                     {...field}
                     />
                 </FormControl>
@@ -131,11 +130,10 @@ export function AssignmentHelpClient() {
           name="specificQuestion"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="text-lg">Specific Question (Optional)</FormLabel>
+              <FormLabel>Specific Question (Optional)</FormLabel>
               <FormControl>
                 <Input
                   placeholder="e.g., How do I approach question 3?"
-                  className="text-base"
                   {...field}
                 />
               </FormControl>

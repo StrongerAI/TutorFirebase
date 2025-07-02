@@ -51,8 +51,7 @@ export function PracticeQuizClient() {
     setStudentAnswers({});
     try {
       const response: GenerateQuizOutput = await generateQuiz(data);
-      const parsedQuiz: QuizData = JSON.parse(response.quiz);
-      setQuizData(parsedQuiz);
+      setQuizData(response);
     } catch (error) {
       console.error("Quiz generation error:", error);
       toast({
@@ -87,9 +86,9 @@ export function PracticeQuizClient() {
           name="topic"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="text-lg flex items-center gap-2"><Puzzle className="w-5 h-5 text-primary"/>Quiz Topic</FormLabel>
+              <FormLabel className="flex items-center gap-2"><Puzzle className="w-5 h-5 text-primary"/>Quiz Topic</FormLabel>
               <FormControl>
-                <Input placeholder="e.g., Photosynthesis, The American Revolution" className="text-base" {...field} />
+                <Input placeholder="e.g., Photosynthesis, The American Revolution" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -101,9 +100,9 @@ export function PracticeQuizClient() {
             name="numQuestions"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="text-lg">Number of Questions (1-10)</FormLabel>
+                <FormLabel>Number of Questions (1-10)</FormLabel>
                 <FormControl>
-                  <Input type="number" min="1" max="10" className="text-base" {...field} 
+                  <Input type="number" min="1" max="10" {...field} 
                     onChange={event => field.onChange(+event.target.value)}
                   />
                 </FormControl>
@@ -116,16 +115,16 @@ export function PracticeQuizClient() {
             name="difficulty"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="text-lg">Difficulty Level</FormLabel>
+                <FormLabel>Difficulty Level</FormLabel>
                 <Select onValueChange={field.onChange} defaultValue={field.value}>
                   <FormControl>
-                    <SelectTrigger className="text-base">
+                    <SelectTrigger>
                       <SelectValue placeholder="Select difficulty" />
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
                     {difficultyLevels.map(level => (
-                      <SelectItem key={level.value} value={level.value} className="text-base">
+                      <SelectItem key={level.value} value={level.value}>
                         {level.label}
                       </SelectItem>
                     ))}

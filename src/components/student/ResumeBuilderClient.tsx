@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState } from 'react';
@@ -61,7 +62,7 @@ export function ResumeBuilderClient() {
             name="fullName"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="text-lg flex items-center gap-2"><User className="w-5 h-5 text-primary"/>Full Name</FormLabel>
+                <FormLabel className="flex items-center gap-2"><User className="w-5 h-5 text-primary"/>Full Name</FormLabel>
                 <FormControl><Input placeholder="e.g., Jane Doe" {...field} /></FormControl>
                 <FormMessage />
               </FormItem>
@@ -72,7 +73,7 @@ export function ResumeBuilderClient() {
             name="contactInfo"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="text-lg flex items-center gap-2"><User className="w-5 h-5 text-primary"/>Contact Info</FormLabel>
+                <FormLabel className="flex items-center gap-2"><User className="w-5 h-5 text-primary"/>Contact Info</FormLabel>
                 <FormControl><Input placeholder="Email, Phone, LinkedIn URL" {...field} /></FormControl>
                 <FormMessage />
               </FormItem>
@@ -84,7 +85,7 @@ export function ResumeBuilderClient() {
           name="workExperience"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="text-lg flex items-center gap-2"><Briefcase className="w-5 h-5 text-primary"/>Work Experience</FormLabel>
+              <FormLabel className="flex items-center gap-2"><Briefcase className="w-5 h-5 text-primary"/>Work Experience</FormLabel>
               <FormControl><Textarea placeholder="Describe your past roles, responsibilities, and achievements. Use a new line for each position." className="min-h-[120px]" {...field} /></FormControl>
               <FormMessage />
             </FormItem>
@@ -95,7 +96,7 @@ export function ResumeBuilderClient() {
           name="education"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="text-lg flex items-center gap-2"><GraduationCap className="w-5 h-5 text-primary"/>Education</FormLabel>
+              <FormLabel className="flex items-center gap-2"><GraduationCap className="w-5 h-5 text-primary"/>Education</FormLabel>
               <FormControl><Textarea placeholder="List your degrees, institutions, and graduation dates." className="min-h-[80px]" {...field} /></FormControl>
               <FormMessage />
             </FormItem>
@@ -106,7 +107,7 @@ export function ResumeBuilderClient() {
           name="skills"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="text-lg flex items-center gap-2"><Star className="w-5 h-5 text-primary"/>Skills</FormLabel>
+              <FormLabel className="flex items-center gap-2"><Star className="w-5 h-5 text-primary"/>Skills</FormLabel>
               <FormControl><Textarea placeholder="List your key skills, separated by commas (e.g., JavaScript, React, Project Management)." className="min-h-[80px]" {...field} /></FormControl>
               <FormMessage />
             </FormItem>
@@ -117,7 +118,7 @@ export function ResumeBuilderClient() {
           name="jobDescription"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="text-lg flex items-center gap-2"><FileText className="w-5 h-5 text-primary"/>Target Job Description</FormLabel>
+              <FormLabel className="flex items-center gap-2"><FileText className="w-5 h-5 text-primary"/>Target Job Description</FormLabel>
               <FormControl><Textarea placeholder="Paste the full job description here to tailor your documents." className="min-h-[120px]" {...field} /></FormControl>
               <FormMessage />
             </FormItem>

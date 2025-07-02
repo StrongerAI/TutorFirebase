@@ -85,11 +85,11 @@ export function SkillsGuideClient() {
           name="currentSkills"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="text-lg flex items-center gap-2"><Layers className="w-5 h-5 text-primary" />Your Current Skills & Proficiency</FormLabel>
+              <FormLabel className="flex items-center gap-2"><Layers className="w-5 h-5 text-primary" />Your Current Skills & Proficiency</FormLabel>
               <FormControl>
                 <Textarea
                   placeholder="e.g., Proficient in JavaScript (React, Node.js), Intermediate Python (Pandas, Flask), Basic UI/UX design principles..."
-                  className="min-h-[100px] text-base"
+                  className="min-h-[100px]"
                   {...field}
                 />
               </FormControl>
@@ -102,11 +102,11 @@ export function SkillsGuideClient() {
           name="desiredSkills"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="text-lg flex items-center gap-2"><DesiredSkillsIcon className="w-5 h-5 text-primary" />Skills You Want to Develop</FormLabel>
+              <FormLabel className="flex items-center gap-2"><DesiredSkillsIcon className="w-5 h-5 text-primary" />Skills You Want to Develop</FormLabel>
               <FormControl>
                 <Textarea
                   placeholder="e.g., Advanced Machine Learning, Cloud Architecture (AWS), Mobile App Development (Flutter), Effective Leadership..."
-                  className="min-h-[100px] text-base"
+                  className="min-h-[100px]"
                   {...field}
                 />
               </FormControl>
@@ -119,11 +119,10 @@ export function SkillsGuideClient() {
           name="careerGoal"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="text-lg flex items-center gap-2"><Target className="w-5 h-5 text-primary" />Primary Career Goal (Optional)</FormLabel>
+              <FormLabel className="flex items-center gap-2"><Target className="w-5 h-5 text-primary" />Primary Career Goal (Optional)</FormLabel>
               <FormControl>
                 <Input
                   placeholder="e.g., Become a Senior Data Scientist, Launch my own tech startup"
-                  className="text-base"
                   {...field}
                 />
               </FormControl>
@@ -137,16 +136,16 @@ export function SkillsGuideClient() {
             name="learningStylePreference"
             render={({ field }) => (
                 <FormItem>
-                    <FormLabel className="text-lg flex items-center gap-2"><Palette className="w-5 h-5 text-primary"/>Preferred Learning Style (Optional)</FormLabel>
+                    <FormLabel className="flex items-center gap-2"><Palette className="w-5 h-5 text-primary"/>Preferred Learning Style (Optional)</FormLabel>
                     <Select onValueChange={field.onChange} defaultValue={field.value}>
                         <FormControl>
-                        <SelectTrigger className="text-base">
+                        <SelectTrigger>
                             <SelectValue placeholder="Select your learning style" />
                         </SelectTrigger>
                         </FormControl>
                         <SelectContent>
                         {learningStyleOptions.map(option => (
-                            <SelectItem key={option.value} value={option.value} className="text-base">
+                            <SelectItem key={option.value} value={option.value}>
                             {option.label}
                             </SelectItem>
                         ))}
@@ -161,16 +160,16 @@ export function SkillsGuideClient() {
             name="timeCommitment"
             render={({ field }) => (
                 <FormItem>
-                    <FormLabel className="text-lg flex items-center gap-2"><Clock className="w-5 h-5 text-primary"/>Weekly Time Commitment (Optional)</FormLabel>
+                    <FormLabel className="flex items-center gap-2"><Clock className="w-5 h-5 text-primary"/>Weekly Time Commitment (Optional)</FormLabel>
                     <Select onValueChange={field.onChange} defaultValue={field.value}>
                         <FormControl>
-                        <SelectTrigger className="text-base">
+                        <SelectTrigger>
                             <SelectValue placeholder="Select your available time" />
                         </SelectTrigger>
                         </FormControl>
                         <SelectContent>
                         {timeCommitmentOptions.map(option => (
-                            <SelectItem key={option.value} value={option.value} className="text-base">
+                            <SelectItem key={option.value} value={option.value}>
                             {option.label}
                             </SelectItem>
                         ))}

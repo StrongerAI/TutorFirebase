@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState } from 'react';
@@ -60,9 +61,9 @@ export function PaperCheckerClient() {
           name="paperText"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="text-md flex items-center gap-2"><FileText className="w-5 h-5 text-primary"/>Student Paper Text</FormLabel>
+              <FormLabel className="flex items-center gap-2"><FileText className="w-5 h-5 text-primary"/>Student Paper Text</FormLabel>
               <FormControl>
-                <Textarea placeholder="Paste the student's paper text here..." className="min-h-[150px] text-base" {...field} />
+                <Textarea placeholder="Paste the student's paper text here..." className="min-h-[150px]" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -73,9 +74,9 @@ export function PaperCheckerClient() {
           name="assignmentInstructions"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="text-md flex items-center gap-2"><ClipboardList className="w-5 h-5 text-primary"/>Assignment Instructions</FormLabel>
+              <FormLabel className="flex items-center gap-2"><ClipboardList className="w-5 h-5 text-primary"/>Assignment Instructions</FormLabel>
               <FormControl>
-                <Textarea placeholder="Provide the assignment instructions..." className="min-h-[80px] text-base" {...field} />
+                <Textarea placeholder="Provide the assignment instructions..." className="min-h-[80px]" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -86,9 +87,9 @@ export function PaperCheckerClient() {
           name="gradingRubric"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="text-md flex items-center gap-2"><ListChecks className="w-5 h-5 text-primary"/>Grading Rubric</FormLabel>
+              <FormLabel className="flex items-center gap-2"><ListChecks className="w-5 h-5 text-primary"/>Grading Rubric</FormLabel>
               <FormControl>
-                <Textarea placeholder="Detail the grading rubric or criteria..." className="min-h-[80px] text-base" {...field} />
+                <Textarea placeholder="Detail the grading rubric or criteria..." className="min-h-[80px]" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -99,9 +100,9 @@ export function PaperCheckerClient() {
           name="additionalContext"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="text-md flex items-center gap-2"><Info className="w-5 h-5 text-primary"/>Additional Context (Optional)</FormLabel>
+              <FormLabel className="flex items-center gap-2"><Info className="w-5 h-5 text-primary"/>Additional Context (Optional)</FormLabel>
               <FormControl>
-                <Textarea placeholder="Any other relevant information..." className="min-h-[60px] text-base" {...field} />
+                <Textarea placeholder="Any other relevant information..." className="min-h-[60px]" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>

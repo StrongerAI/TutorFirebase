@@ -75,11 +75,11 @@ export function CareerCoachClient() {
           name="currentSkills"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="text-lg flex items-center gap-2"><Layers className="w-5 h-5 text-primary" />Your Current Skills</FormLabel>
+              <FormLabel className="flex items-center gap-2"><Layers className="w-5 h-5 text-primary" />Your Current Skills</FormLabel>
               <FormControl>
                 <Textarea
                   placeholder="e.g., Python programming, data analysis, project management, public speaking..."
-                  className="min-h-[100px] text-base"
+                  className="min-h-[100px]"
                   {...field}
                 />
               </FormControl>
@@ -92,11 +92,11 @@ export function CareerCoachClient() {
           name="interests"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="text-lg flex items-center gap-2"><Heart className="w-5 h-5 text-primary" />Your Interests & Passions</FormLabel>
+              <FormLabel className="flex items-center gap-2"><Heart className="w-5 h-5 text-primary" />Your Interests & Passions</FormLabel>
               <FormControl>
                 <Textarea
                   placeholder="e.g., Artificial intelligence, creative writing, solving environmental problems, video games..."
-                  className="min-h-[100px] text-base"
+                  className="min-h-[100px]"
                   {...field}
                 />
               </FormControl>
@@ -109,11 +109,11 @@ export function CareerCoachClient() {
           name="workExperience"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="text-lg flex items-center gap-2"><Building className="w-5 h-5 text-primary" />Work Experience (Optional)</FormLabel>
+              <FormLabel className="flex items-center gap-2"><Building className="w-5 h-5 text-primary" />Work Experience (Optional)</FormLabel>
               <FormControl>
                 <Textarea
                   placeholder="Briefly describe your relevant past roles or projects."
-                  className="min-h-[80px] text-base"
+                  className="min-h-[80px]"
                   {...field}
                 />
               </FormControl>
@@ -126,11 +126,11 @@ export function CareerCoachClient() {
           name="careerAspirations"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="text-lg flex items-center gap-2"><Target className="w-5 h-5 text-primary" />Career Aspirations</FormLabel>
+              <FormLabel className="flex items-center gap-2"><Target className="w-5 h-5 text-primary" />Career Aspirations</FormLabel>
               <FormControl>
                 <Textarea
                   placeholder="What are your long-term career goals? What kind of impact do you want to make?"
-                  className="min-h-[100px] text-base"
+                  className="min-h-[100px]"
                   {...field}
                 />
               </FormControl>
@@ -143,16 +143,16 @@ export function CareerCoachClient() {
           name="preferredWorkEnvironment"
           render={({ field }) => (
             <FormItem>
-                <FormLabel className="text-lg flex items-center gap-2"><Users className="w-5 h-5 text-primary"/>Preferred Work Environment (Optional)</FormLabel>
+                <FormLabel className="flex items-center gap-2"><Users className="w-5 h-5 text-primary"/>Preferred Work Environment (Optional)</FormLabel>
                 <Select onValueChange={field.onChange} defaultValue={field.value}>
                     <FormControl>
-                    <SelectTrigger className="text-base">
+                    <SelectTrigger>
                         <SelectValue placeholder="Select your preferred environment" />
                     </SelectTrigger>
                     </FormControl>
                     <SelectContent>
                     {workEnvironmentOptions.map(option => (
-                        <SelectItem key={option.value} value={option.value} className="text-base">
+                        <SelectItem key={option.value} value={option.value}>
                         {option.label}
                         </SelectItem>
                     ))}

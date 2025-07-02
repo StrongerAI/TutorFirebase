@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState } from 'react';
@@ -64,11 +65,10 @@ export function ScholarshipFinderClient() {
           name="fieldOfStudy"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="text-lg">Your Field of Study</FormLabel>
+              <FormLabel>Your Field of Study</FormLabel>
               <FormControl>
                 <Input
                   placeholder="e.g., 'Computer Science', 'Marine Biology'"
-                  className="text-base"
                   {...field}
                 />
               </FormControl>
@@ -81,11 +81,11 @@ export function ScholarshipFinderClient() {
           name="interests"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="text-lg">Your Interests & Skills</FormLabel>
+              <FormLabel>Your Interests & Skills</FormLabel>
               <FormControl>
                 <Textarea
                   placeholder="e.g., 'Passionate about renewable energy and have experience with Python and data analysis.'"
-                  className="min-h-[100px] text-base"
+                  className="min-h-[100px]"
                   {...field}
                 />
               </FormControl>
@@ -98,7 +98,7 @@ export function ScholarshipFinderClient() {
           name="opportunityType"
           render={({ field }) => (
             <FormItem className="space-y-3">
-              <FormLabel className="text-lg">What are you looking for?</FormLabel>
+              <FormLabel>What are you looking for?</FormLabel>
               <FormControl>
                 <RadioGroup
                   onValueChange={field.onChange}
@@ -109,7 +109,7 @@ export function ScholarshipFinderClient() {
                     <FormControl>
                       <RadioGroupItem value="scholarship" />
                     </FormControl>
-                    <FormLabel className="font-normal text-base">
+                    <FormLabel className="font-normal">
                       Scholarships
                     </FormLabel>
                   </FormItem>
@@ -117,7 +117,7 @@ export function ScholarshipFinderClient() {
                     <FormControl>
                       <RadioGroupItem value="internship" />
                     </FormControl>
-                    <FormLabel className="font-normal text-base">
+                    <FormLabel className="font-normal">
                       Internships
                     </FormLabel>
                   </FormItem>
@@ -132,11 +132,10 @@ export function ScholarshipFinderClient() {
           name="location"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="text-lg">Preferred Location (Optional for internships)</FormLabel>
+              <FormLabel>Preferred Location (Optional for internships)</FormLabel>
               <FormControl>
                 <Input
                   placeholder="e.g., 'Remote', 'San Francisco, CA'"
-                  className="text-base"
                   {...field}
                 />
               </FormControl>

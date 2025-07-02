@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState } from 'react';
@@ -68,9 +69,9 @@ export function QuizMakerClient() {
           name="topic"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="text-lg flex items-center gap-2"><Puzzle className="w-5 h-5 text-primary"/>Quiz Topic</FormLabel>
+              <FormLabel className="flex items-center gap-2"><Puzzle className="w-5 h-5 text-primary"/>Quiz Topic</FormLabel>
               <FormControl>
-                <Input placeholder="e.g., Photosynthesis, The American Revolution" className="text-base" {...field} />
+                <Input placeholder="e.g., Photosynthesis, The American Revolution" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -81,9 +82,9 @@ export function QuizMakerClient() {
           name="numQuestions"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="text-lg">Number of Questions (1-20)</FormLabel>
+              <FormLabel>Number of Questions (1-20)</FormLabel>
               <FormControl>
-                <Input type="number" min="1" max="20" className="text-base" {...field} 
+                <Input type="number" min="1" max="20" {...field} 
                   onChange={event => field.onChange(+event.target.value)}
                 />
               </FormControl>
@@ -96,16 +97,16 @@ export function QuizMakerClient() {
           name="difficulty"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="text-lg">Difficulty Level</FormLabel>
+              <FormLabel>Difficulty Level</FormLabel>
               <Select onValueChange={field.onChange} defaultValue={field.value}>
                 <FormControl>
-                  <SelectTrigger className="text-base">
+                  <SelectTrigger>
                     <SelectValue placeholder="Select difficulty" />
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
                   {difficultyLevels.map(level => (
-                    <SelectItem key={level.value} value={level.value} className="text-base">
+                    <SelectItem key={level.value} value={level.value}>
                       {level.label}
                     </SelectItem>
                   ))}
@@ -137,7 +138,7 @@ export function QuizMakerClient() {
       {result.quiz.map((q: QuizQuestion, index: number) => (
         <Card key={index} className="bg-primary/5">
           <CardHeader>
-            <CardTitle className="text-md font-semibold">Question {index + 1}:</CardTitle>
+            <CardTitle className="font-semibold text-base md:text-md">Question {index + 1}:</CardTitle>
             <CardDescription>{q.question}</CardDescription>
           </CardHeader>
           <CardContent>

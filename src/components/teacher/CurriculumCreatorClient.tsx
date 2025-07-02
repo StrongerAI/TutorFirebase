@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState } from 'react';
@@ -169,9 +170,9 @@ export function CurriculumCreatorClient() {
           name="subject"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="text-lg flex items-center gap-2"><BookOpen className="w-5 h-5 text-primary"/>Subject Matter</FormLabel>
+              <FormLabel className="flex items-center gap-2"><BookOpen className="w-5 h-5 text-primary"/>Subject Matter</FormLabel>
               <FormControl>
-                <Input placeholder="e.g., Introduction to Algebra, World War II History" className="text-base" {...field} />
+                <Input placeholder="e.g., Introduction to Algebra, World War II History" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -182,11 +183,11 @@ export function CurriculumCreatorClient() {
           name="learningObjectives"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="text-lg flex items-center gap-2"><PenTool className="w-5 h-5 text-primary"/>Learning Objectives</FormLabel>
+              <FormLabel className="flex items-center gap-2"><PenTool className="w-5 h-5 text-primary"/>Learning Objectives</FormLabel>
               <FormControl>
                 <Textarea
                   placeholder="List the key learning objectives for this curriculum. e.g., Students will be able to solve linear equations, understand the causes of WWII..."
-                  className="min-h-[120px] text-base"
+                  className="min-h-[120px]"
                   {...field}
                 />
               </FormControl>
