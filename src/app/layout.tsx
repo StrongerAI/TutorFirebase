@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import './globals.css';
 import { Toaster } from "@/components/ui/toaster";
 import { UserRoleProvider } from '@/context/UserRoleContext';
+import { ThemeProvider } from '@/components/layout/ThemeProvider';
 
 export const metadata: Metadata = {
   title: 'TutorTrack',
@@ -22,10 +23,17 @@ export default function RootLayout({
         <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap" rel="stylesheet" />
       </head>
       <body className="font-body antialiased">
-        <UserRoleProvider>
-          {children}
-        </UserRoleProvider>
-        <Toaster />
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <UserRoleProvider>
+            {children}
+          </UserRoleProvider>
+          <Toaster />
+        </ThemeProvider>
       </body>
     </html>
   );

@@ -10,6 +10,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import type { NavItem } from "@/types";
 import Image from "next/image";
+import { ThemeToggle } from "./ThemeToggle";
 
 export function AppHeader() {
   const { role, logout } = useUserRole();
@@ -132,7 +133,8 @@ export function AppHeader() {
       </nav>
 
       {/* Right Group: User Menu */}
-      <div className="flex items-center">
+      <div className="flex items-center gap-2">
+        <ThemeToggle />
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="ghost" size="icon" className="rounded-full w-9 h-9">

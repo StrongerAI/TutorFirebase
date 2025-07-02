@@ -13,6 +13,7 @@ import { AuthDialog } from "./AuthDialog";
 import { useUserRole } from "@/hooks/useUserRole";
 import { useRouter } from "next/navigation";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription, SheetTrigger } from "@/components/ui/sheet";
+import { ThemeToggle } from "@/components/layout/ThemeToggle";
 
 export function LoginButtons() {
   const [isAuthDialogOpen, setIsAuthDialogOpen] = useState(false);
@@ -64,10 +65,12 @@ export function LoginButtons() {
               </Button>
               <Button variant="ghost" onClick={() => handleAuthDialogOpen(null, 'signin')}>Login</Button>
               <Button variant="default" onClick={() => handleAuthDialogOpen(null, 'signup')}>Sign Up</Button>
+              <ThemeToggle />
             </div>
 
             {/* Mobile Nav */}
-            <div className="md:hidden">
+            <div className="md:hidden flex items-center gap-2">
+              <ThemeToggle />
               <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
                 <SheetTrigger asChild>
                   <Button variant="ghost" size="icon">
