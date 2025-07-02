@@ -55,7 +55,6 @@ export function LoginButtons() {
                 className="rounded-md"
                 data-ai-hint="logo education"
               />
-              <span className="text-xl font-bold font-headline text-transparent bg-clip-text bg-gradient-to-r from-primary to-primary">{APP_NAME}</span>
             </Link>
             
             {/* Desktop Nav */}
