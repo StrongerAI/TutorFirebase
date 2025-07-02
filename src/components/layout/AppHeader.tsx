@@ -11,10 +11,12 @@ import { usePathname } from "next/navigation";
 import type { NavItem } from "@/types";
 import Image from "next/image";
 import { ThemeToggle } from "./ThemeToggle";
+import { useState } from "react";
 
 export function AppHeader() {
   const { role, logout } = useUserRole();
   const pathname = usePathname();
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const navItems: NavItem[] = role === 'student' ? STUDENT_NAV_ITEMS : TEACHER_NAV_ITEMS;
   const homePath = '/';
@@ -24,6 +26,7 @@ export function AppHeader() {
     return (
       <Link
         href={item.href!}
+        onClick={() => setIsMobileMenuOpen(false)}
         className={`flex items-center gap-3 rounded-lg px-3 py-2.5 text-base transition-all hover:bg-muted hover:text-primary ${
             isActive ? "bg-muted text-primary font-medium" : "text-muted-foreground"
         }`}
@@ -33,12 +36,17 @@ export function AppHeader() {
       </Link>
     );
   };
+
+  const handleLogout = () => {
+    setIsMobileMenuOpen(false);
+    logout();
+  }
   
   return (
     <header className="flex h-16 items-center justify-between gap-4 border-b bg-card px-4 md:px-6 sticky top-0 z-30">
       {/* Left Group: Mobile Nav Trigger & Logo/App Name */}
       <div className="flex items-center gap-4">
-        <Sheet>
+        <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
           <SheetTrigger asChild>
             <Button variant="outline" size="icon" className="shrink-0 md:hidden">
               <Menu className="h-5 w-5" />
@@ -49,7 +57,7 @@ export function AppHeader() {
             <SheetHeader className="p-4 border-b">
                <SheetTitle className="sr-only">Main Navigation</SheetTitle>
                <SheetDescription className="sr-only">App main navigation links</SheetDescription>
-              <Link href={homePath} className="flex items-center gap-3 text-lg font-semibold">
+              <Link href={homePath} onClick={() => setIsMobileMenuOpen(false)} className="flex items-center gap-3 text-lg font-semibold">
                   <Image src="https://placehold.co/32x32/9775FA/FFFFFF.png?text=TT" alt={`${APP_NAME} Logo`} width={32} height={32} className="rounded-md" data-ai-hint="logo education" />
               </Link>
             </SheetHeader>
@@ -74,7 +82,7 @@ export function AppHeader() {
               })}
             </nav>
             <div className="mt-auto p-4 border-t">
-              <Button variant="ghost" onClick={logout} className="w-full justify-start gap-3 text-base px-3 py-2.5">
+              <Button variant="ghost" onClick={handleLogout} className="w-full justify-start gap-3 text-base px-3 py-2.5">
                 <LogOut className="h-5 w-5" />
                 Logout
               </Button>
