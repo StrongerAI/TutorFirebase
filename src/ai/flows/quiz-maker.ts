@@ -34,7 +34,9 @@ const prompt = ai.definePrompt({
   name: 'generateQuizPrompt',
   input: {schema: GenerateQuizInputSchema},
   output: {schema: GenerateQuizOutputSchema},
-  prompt: `You are a quiz generator for teachers. Generate a quiz on the topic of {{{topic}}} with {{{numQuestions}}} questions and a difficulty level of {{{difficulty}}}. The quiz should be returned in JSON format with keys: question, options, and answer.
+  prompt: `You are a quiz generator for teachers. Generate a quiz on the topic of {{{topic}}} with {{{numQuestions}}} questions and a difficulty level of {{{difficulty}}}.
+
+The output must be a single JSON object with a key named "quiz". This key should contain an array of question objects. Each question object must have the following keys: "question", "options" (an array of strings), and "answer" (a string that is one of the options).
 
 Example Quiz Format:
 {
@@ -52,7 +54,7 @@ Example Quiz Format:
   ]
 }
 
-Ensure the generated quiz is valid JSON.
+Ensure the entire output is a single, valid JSON object and nothing else.
 `,
 });
 
