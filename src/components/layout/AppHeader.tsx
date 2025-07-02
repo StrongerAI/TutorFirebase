@@ -1,4 +1,3 @@
-
 "use client";
 
 import { Button } from "@/components/ui/button";
@@ -51,7 +50,6 @@ export function AppHeader() {
                <SheetDescription className="sr-only">App main navigation links</SheetDescription>
               <Link href={homePath} className="flex items-center gap-3 text-lg font-semibold">
                   <Image src="https://placehold.co/32x32/9775FA/FFFFFF.png?text=TT" alt={`${APP_NAME} Logo`} width={32} height={32} className="rounded-md" data-ai-hint="logo education" />
-                  <span className="font-headline text-primary">{APP_NAME}</span>
               </Link>
             </SheetHeader>
             <nav className="grid gap-2 p-4">
