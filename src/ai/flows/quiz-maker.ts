@@ -21,10 +21,20 @@ const GenerateQuizInputSchema = z.object({
 });
 export type GenerateQuizInput = z.infer<typeof GenerateQuizInputSchema>;
 
-const GenerateQuizOutputSchema = z.object({
-  quiz: z.string().describe('The generated quiz in JSON format.'),
+// Use a structured schema for the output instead of a string
+const QuestionSchema = z.object({
+    question: z.string().describe("The question text."),
+    options: z.array(z.string()).describe("An array of possible answers."),
+    answer: z.string().describe("The correct answer, which must be one of the options."),
 });
+
+const GenerateQuizOutputSchema = z.object({
+  quiz: z.array(QuestionSchema).describe("An array of question objects that form the quiz."),
+});
+
+// The output type is now the structured QuizData
 export type GenerateQuizOutput = z.infer<typeof GenerateQuizOutputSchema>;
+
 
 export async function generateQuiz(input: GenerateQuizInput): Promise<GenerateQuizOutput> {
   return generateQuizFlow(input);
@@ -33,7 +43,7 @@ export async function generateQuiz(input: GenerateQuizInput): Promise<GenerateQu
 const prompt = ai.definePrompt({
   name: 'generateQuizPrompt',
   input: {schema: GenerateQuizInputSchema},
-  output: {schema: GenerateQuizOutputSchema},
+  output: {schema: GenerateQuizOutputSchema}, // Use the new structured schema
   prompt: `You are a quiz generator for teachers. Generate a quiz on the topic of {{{topic}}} with {{{numQuestions}}} questions and a difficulty level of {{{difficulty}}}.
 
 The output must be a single JSON object with a key named "quiz". This key should contain an array of question objects. Each question object must have the following keys: "question", "options" (an array of strings), and "answer" (a string that is one of the options).
@@ -62,10 +72,11 @@ const generateQuizFlow = ai.defineFlow(
   {
     name: 'generateQuizFlow',
     inputSchema: GenerateQuizInputSchema,
-    outputSchema: GenerateQuizOutputSchema,
+    outputSchema: GenerateQuizOutputSchema, // Use the new structured schema
   },
   async input => {
     const {output} = await prompt(input);
+    // The output is now already parsed by Genkit into the correct object structure
     return output!;
   }
 );

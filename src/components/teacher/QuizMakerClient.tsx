@@ -40,9 +40,8 @@ export function QuizMakerClient() {
     setResult(null);
     try {
       const response: GenerateQuizOutput = await generateQuiz(data);
-      // The AI flow returns quiz as a JSON string. Parse it here.
-      const parsedQuiz: QuizData = JSON.parse(response.quiz);
-      setResult(parsedQuiz);
+      // The AI flow now returns a parsed JSON object directly.
+      setResult(response);
     } catch (error) {
       console.error("Quiz maker error:", error);
       toast({
