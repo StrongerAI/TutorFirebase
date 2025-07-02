@@ -12,3 +12,4 @@ import '@/ai/flows/summarize-chat-title-flow.ts'; // Added new flow for chat tit
 import '@/ai/flows/recommendations-flow.ts';
 import '@/ai/flows/resume-builder-flow.ts';
 import '@/ai/flows/scholarship-finder-flow.ts';
+import '@/ai/flows/ai-conversation-flow.ts';

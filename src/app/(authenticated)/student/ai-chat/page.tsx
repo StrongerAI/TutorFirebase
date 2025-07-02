@@ -7,6 +7,7 @@ import { useState, useEffect } from 'react';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { summarizeChatTitle } from '@/ai/flows/summarize-chat-title-flow';
 import { useToast } from '@/hooks/use-toast';
+import { generateResponse } from '@/ai/flows/ai-conversation-flow';
 
 // Mock data for chat threads
 const mockThreads = [
@@ -26,9 +27,20 @@ export default function StudentAiChatPage() {
     const currentThread = threads.find(t => t.id === selectedThreadId);
     const shouldAttemptTitleUpdate = currentThread && currentThread.title === 'New Chat' && selectedThreadId;
 
-    // Mock AI response
-    await new Promise(resolve => setTimeout(resolve, 1000 + Math.random() * 1000));
-    const aiResponseText = `Student AI: You asked about "${messageText}" in thread "${selectedThreadId}". How can I help?`;
+    // Generate real AI response
+    let aiResponseText = "Sorry, I couldn't generate a response. Please try again.";
+    try {
+        const response = await generateResponse({ prompt: messageText });
+        aiResponseText = response.response;
+    } catch (error) {
+        console.error("Failed to get AI response:", error);
+        toast({
+          title: "Error Getting Response",
+          description: "Could not connect to the AI service.",
+          variant: "destructive",
+        });
+        return aiResponseText; // Return early with error message
+    }
 
     if (shouldAttemptTitleUpdate) {
       try {
