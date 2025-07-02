@@ -9,9 +9,11 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { useToast } from '@/hooks/use-toast';
-import { PenTool, BookOpen, Sparkles, Loader2 } from 'lucide-react';
+import { PenTool, BookOpen, Sparkles, Loader2, List, Activity } from 'lucide-react';
 import { z } from 'zod';
 import { GenAiFeaturePage } from '@/components/shared/FeaturePage';
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
+import { Badge } from '@/components/ui/badge';
 
 const CreateCurriculumInputClientSchema = z.object({
   subject: z.string().min(3, { message: "Subject must be at least 3 characters." }),
@@ -100,11 +102,46 @@ export function CurriculumCreatorClient() {
   );
 
   const resultComponent = result && (
-    <div>
-        <h3 className="text-xl font-semibold mb-2 font-headline">Generated Curriculum Outline</h3>
-        <pre className="whitespace-pre-wrap bg-primary/5 p-4 rounded-md text-sm text-card-foreground/90 overflow-auto max-h-[400px]">
-        {result.curriculumOutline}
-        </pre>
+    <div className="space-y-6">
+      <div className="text-center">
+        <h2 className="text-2xl font-bold font-headline">{result.title}</h2>
+        <p className="text-muted-foreground mt-2">{result.description}</p>
+      </div>
+
+      <div>
+        <h3 className="text-lg font-semibold mb-2 font-headline">Key Learning Objectives</h3>
+        <div className="flex flex-wrap gap-2">
+            {result.learning_objectives.map((obj, i) => (
+                <Badge key={i} variant="secondary" className="text-sm">{obj}</Badge>
+            ))}
+        </div>
+      </div>
+
+      <Accordion type="single" collapsible className="w-full" defaultValue="item-0">
+        {result.modules.map((module, index) => (
+          <AccordionItem key={index} value={`item-${index}`}>
+            <AccordionTrigger className="text-lg font-semibold">
+              Module {module.moduleNumber}: {module.moduleTitle}
+            </AccordionTrigger>
+            <AccordionContent>
+              <div className="space-y-4">
+                  <div>
+                    <h4 className="font-semibold mb-2 flex items-center gap-2 text-md"><List className="w-4 h-4 text-primary"/>Topics Covered</h4>
+                    <ul className="list-disc list-inside space-y-1 pl-2 text-muted-foreground">
+                      {module.topics.map((topic, i) => <li key={i}>{topic}</li>)}
+                    </ul>
+                  </div>
+                  <div>
+                    <h4 className="font-semibold mb-2 flex items-center gap-2 text-md"><Activity className="w-4 h-4 text-primary"/>Suggested Activities</h4>
+                    <ul className="list-disc list-inside space-y-1 pl-2 text-muted-foreground">
+                      {module.activities.map((activity, i) => <li key={i}>{activity}</li>)}
+                    </ul>
+                  </div>
+              </div>
+            </AccordionContent>
+          </AccordionItem>
+        ))}
+      </Accordion>
     </div>
   );
 
