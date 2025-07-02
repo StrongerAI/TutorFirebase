@@ -12,7 +12,7 @@ import type { UserRole } from "@/types";
 import { AuthDialog } from "./AuthDialog";
 import { useUserRole } from "@/hooks/useUserRole";
 import { useRouter } from "next/navigation";
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription, SheetTrigger } from "@/components/ui/sheet";
 
 export function LoginButtons() {
   const [isAuthDialogOpen, setIsAuthDialogOpen] = useState(false);
@@ -39,12 +39,14 @@ export function LoginButtons() {
     }
   };
 
+  const homePath = "/";
+
   return (
     <>
       <Card className="w-full min-h-screen shadow-none rounded-none flex flex-col bg-card">
         <nav className="p-4 border-b border-border/70 sticky top-0 bg-card z-10">
           <div className="container mx-auto flex justify-between items-center">
-            <Link href="/" className="flex items-center gap-2">
+            <Link href={homePath} className="flex items-center gap-2">
               <Image
                 src="https://placehold.co/32x32/9775FA/FFFFFF.png?text=TT"
                 alt={`${APP_NAME} Logo`}
@@ -74,6 +76,10 @@ export function LoginButtons() {
                   </Button>
                 </SheetTrigger>
                 <SheetContent side="right">
+                  <SheetHeader className="sr-only">
+                    <SheetTitle>Mobile Menu</SheetTitle>
+                    <SheetDescription>Main navigation links for mobile.</SheetDescription>
+                  </SheetHeader>
                    <div className="flex flex-col space-y-4 pt-8">
                      <Button variant="ghost" asChild className="w-full text-lg">
                         <Link href="/about" onClick={()=>setIsMobileMenuOpen(false)}>About</Link>
