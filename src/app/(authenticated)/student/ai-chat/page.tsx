@@ -121,7 +121,7 @@ export default function StudentAiChatPage() {
           onSendMessage={handleStudentMessage} 
           chatTitle="Student AI Learning Assistant"
           placeholder="Ask me anything about your studies..."
-          aiAvatarSrc="https://placehold.co/40x40/9775FA/FFFFFF.png?text=AI"
+          aiAvatarSrc="https://placehold.co/40x40/9775FA/FFFFFF.png?text=TT"
           data-ai-hint="bot avatar"
           toggleDesktopSidebar={!isMobile ? toggleDesktopSidebar : undefined}
           isMobile={isMobile}

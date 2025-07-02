@@ -116,7 +116,7 @@ export default function TeacherAiChatPage() {
           onSendMessage={handleTeacherMessage} 
           chatTitle="Teacher AI Support Chat"
           placeholder="Ask about lesson planning, student engagement..."
-          aiAvatarSrc="https://placehold.co/40x40/9775FA/FFFFFF.png?text=AI"
+          aiAvatarSrc="https://placehold.co/40x40/9775FA/FFFFFF.png?text=TT"
           data-ai-hint="bot avatar teacher"
           toggleDesktopSidebar={!isMobile ? toggleDesktopSidebar : undefined}
           isMobile={isMobile}
