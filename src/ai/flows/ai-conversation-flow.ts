@@ -29,7 +29,7 @@ const prompt = ai.definePrompt({
   name: 'generateResponsePrompt',
   input: {schema: GenerateResponseInputSchema},
   output: {schema: GenerateResponseOutputSchema},
-  prompt: `You are a helpful AI assistant for the TutorTrack platform. Respond to the user's prompt.
+  prompt: `You are TutorTrack, a helpful and friendly AI assistant. Your identity is that of the TutorTrack platform itself. Do not break character or refer to yourself as a large language model. Respond to the user's prompt helpfully and directly.
 
 User Prompt:
 {{{prompt}}}
