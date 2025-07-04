@@ -17,6 +17,9 @@ import {
   signInWithEmailAndPassword,
   GoogleAuthProvider,
   signInWithPopup,
+  linkWithCredential,
+  EmailAuthProvider,
+  linkWithPopup,
 } from 'firebase/auth';
 import { auth, db } from '@/lib/firebase/config';
 import { doc, getDoc } from 'firebase/firestore';
@@ -72,20 +75,30 @@ export function AuthDialog({ isOpen, onOpenChange, role: initialRole, defaultTab
   const handleEmailPasswordSignUp = async (
     values: z.infer<typeof authFormSchema>
   ) => {
-    if (!dialogRole) {
-        toast({ title: 'Role not selected', description: 'Please select a role before signing up.', variant: 'destructive'});
-        return;
-    }
     setIsSubmitting(true);
+    const currentUser = auth.currentUser;
+
     try {
-      const userCredential = await createUserWithEmailAndPassword(
-        auth,
-        values.email,
-        values.password
-      );
-      // Set role in Firestore for the new user
-      await setRoleForUser(userCredential.user.uid, dialogRole);
-      toast({ title: 'Account Created!', description: 'Welcome! Redirecting you to your dashboard.' });
+      if (currentUser && currentUser.isAnonymous) {
+        // LINKING: Upgrade anonymous user to a permanent account
+        const credential = EmailAuthProvider.credential(values.email, values.password);
+        await linkWithCredential(currentUser, credential);
+        toast({ title: 'Account Upgraded!', description: 'Your guest session has been saved to a permanent account.' });
+      } else {
+        // STANDARD SIGN-UP: Create a brand new user
+        if (!dialogRole) {
+            toast({ title: 'Role not selected', description: 'Please select a role before signing up.', variant: 'destructive'});
+            setIsSubmitting(false);
+            return;
+        }
+        const userCredential = await createUserWithEmailAndPassword(
+          auth,
+          values.email,
+          values.password
+        );
+        await setRoleForUser(userCredential.user.uid, dialogRole);
+        toast({ title: 'Account Created!', description: 'Welcome! Redirecting you to your dashboard.' });
+      }
       onOpenChange(false);
     } catch (error: any) {
       toast({
@@ -122,25 +135,33 @@ export function AuthDialog({ isOpen, onOpenChange, role: initialRole, defaultTab
   };
   
   const handleGoogleSignIn = async () => {
-    if (!dialogRole) {
-        toast({ title: 'Role not selected', description: 'Please select a role before signing in with Google.', variant: 'destructive'});
-        return;
-    }
     setIsSubmitting(true);
     const provider = new GoogleAuthProvider();
-    try {
-        const result = await signInWithPopup(auth, provider);
-        
-        // Check if the user document already exists in Firestore.
-        const userDocRef = doc(db, 'users', result.user.uid);
-        const userDoc = await getDoc(userDocRef);
-        
-        // If the user document does not exist, it's a new user, so set their role.
-        if (!userDoc.exists()) {
-            await setRoleForUser(result.user.uid, dialogRole);
-        }
+    const currentUser = auth.currentUser;
 
-        toast({ title: 'Signed In with Google!', description: 'Welcome! Redirecting you to your dashboard.' });
+    try {
+        if (currentUser && currentUser.isAnonymous) {
+          // LINKING: Upgrade anonymous user to a permanent Google user
+          await linkWithPopup(currentUser, provider);
+          toast({ title: 'Account Upgraded!', description: 'Your guest session has been saved to your Google account.' });
+        } else {
+          // STANDARD SIGN-IN or SIGN-UP
+          if (!dialogRole && !currentUser) { // Role is only required for brand new signups
+            toast({ title: 'Role not selected', description: 'Please select a role before signing in with Google.', variant: 'destructive'});
+            setIsSubmitting(false);
+            return;
+          }
+          const result = await signInWithPopup(auth, provider);
+          const userDocRef = doc(db, 'users', result.user.uid);
+          const userDoc = await getDoc(userDocRef);
+          
+          if (!userDoc.exists()) {
+              // This is a new user sign-up, so we set their role.
+              await setRoleForUser(result.user.uid, dialogRole);
+          }
+          // For both new and existing users:
+          toast({ title: 'Signed In with Google!', description: 'Welcome! Redirecting you to your dashboard.' });
+        }
         onOpenChange(false);
     } catch (error: any) {
         toast({ title: 'Google Sign-In Failed', description: error.message, variant: 'destructive'});
