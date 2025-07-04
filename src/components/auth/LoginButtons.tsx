@@ -33,10 +33,10 @@ export function LoginButtons() {
     setIsMobileMenuOpen(false); // Close mobile menu if open
   };
 
-  const handleGuestPreview = (role: UserRole) => {
+  const handleGuestPreview = async (role: UserRole) => {
     if (role) {
-      setGuestRole(role);
-      router.push(`/${role}/dashboard`);
+      await setGuestRole(role);
+      // The redirection will be handled by the effect in UserRoleContext
     }
   };
 
