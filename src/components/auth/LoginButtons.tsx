@@ -3,7 +3,7 @@
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { GraduationCap, Briefcase, Sparkles, Users, BarChart, Menu, Loader2 } from "lucide-react";
+import { GraduationCap, Briefcase, Sparkles, Users, BarChart, Menu, Loader2, LogOut, LayoutDashboard } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { APP_NAME } from "@/lib/constants";
@@ -23,15 +23,16 @@ export function LoginButtons() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isGuestLoading, setIsGuestLoading] = useState(false);
 
-  const { user, role, isLoading, setGuestRole } = useUserRole();
+  const { user, role, isLoading, setGuestRole, logout } = useUserRole();
   const router = useRouter();
 
-  // If a user is already logged in, redirect them to their dashboard.
+  // This effect will run ONLY after a guest preview button is clicked.
+  // It waits for the user/role to be set, then redirects to the dashboard.
   useEffect(() => {
-    if (!isLoading && user && role) {
+    if (isGuestLoading && user && role) {
       router.push(`/${role}/dashboard`);
     }
-  }, [isLoading, user, role, router]);
+  }, [user, role, isGuestLoading, router]);
 
 
   const handleAuthDialogOpen = (role: UserRole, tab: 'signin' | 'signup' = 'signup') => {
@@ -45,12 +46,10 @@ export function LoginButtons() {
   const handleGuestPreview = async (role: UserRole) => {
     if (role) {
       setIsGuestLoading(true);
+      // setGuestRole now triggers the useEffect above on success
       const success = await setGuestRole(role);
-      if (success) {
-        // The onAuthStateChanged listener in the context will now handle
-        // updating the user/role state, and the useEffect above will redirect.
-      } else {
-        // Toast message is handled within the context on error
+      // If it fails, the toast is shown in the context, and we stop loading.
+      if (!success) {
         setIsGuestLoading(false);
       }
     }
@@ -58,13 +57,66 @@ export function LoginButtons() {
 
   const homePath = "/";
 
-  // Prevent flash of login page for already logged-in users
-  if (isLoading || (user && role)) {
+  // Show a loading screen only during the initial auth check.
+  // After that, the page will render regardless of auth state.
+  if (isLoading) {
      return (
       <div className="flex items-center justify-center h-screen bg-background">
         <Loader2 className="h-12 w-12 animate-spin text-primary" />
       </div>
     );
+  }
+
+  // Component to render desktop nav buttons based on auth state
+  const DesktopNavButtons = () => {
+    if (user && role) {
+        return (
+            <>
+                <Button variant="ghost" asChild>
+                    <Link href={`/${role}/dashboard`}>Dashboard</Link>
+                </Button>
+                <Button variant="default" onClick={logout}>Logout</Button>
+                <ThemeToggle />
+            </>
+        )
+    }
+    return (
+        <>
+            <Button variant="ghost" asChild>
+                <Link href="/about">About</Link>
+            </Button>
+            <Button variant="ghost" onClick={() => handleAuthDialogOpen(null, 'signin')}>Login</Button>
+            <Button variant="default" onClick={() => handleAuthDialogOpen(null, 'signup')}>Sign Up</Button>
+            <ThemeToggle />
+        </>
+    )
+  }
+
+  // Component to render mobile nav buttons based on auth state
+  const MobileNavButtons = () => {
+    if (user && role) {
+        return (
+            <div className="flex flex-col space-y-4 pt-8">
+                 <Button variant="outline" asChild className="w-full text-lg">
+                    <Link href={`/${role}/dashboard`} onClick={()=>setIsMobileMenuOpen(false)}>
+                        <LayoutDashboard className="mr-2"/>Dashboard
+                    </Link>
+                </Button>
+                 <Button variant="default" onClick={() => {logout(); setIsMobileMenuOpen(false);}} className="w-full text-lg">
+                    <LogOut className="mr-2"/>Logout
+                 </Button>
+            </div>
+        )
+    }
+    return (
+        <div className="flex flex-col space-y-4 pt-8">
+            <Button variant="ghost" asChild className="w-full text-lg">
+                <Link href="/about" onClick={()=>setIsMobileMenuOpen(false)}>About</Link>
+            </Button>
+            <Button variant="outline" onClick={() => handleAuthDialogOpen(null, 'signin')} className="w-full text-lg">Login</Button>
+            <Button variant="default" onClick={() => handleAuthDialogOpen(null, 'signup')} className="w-full text-lg">Sign Up</Button>
+        </div>
+    )
   }
 
   return (
@@ -83,17 +135,10 @@ export function LoginButtons() {
               />
             </Link>
             
-            {/* Desktop Nav */}
             <div className="hidden md:flex items-center space-x-2">
-              <Button variant="ghost" asChild>
-                <Link href="/about">About</Link>
-              </Button>
-              <Button variant="ghost" onClick={() => handleAuthDialogOpen(null, 'signin')}>Login</Button>
-              <Button variant="default" onClick={() => handleAuthDialogOpen(null, 'signup')}>Sign Up</Button>
-              <ThemeToggle />
+                <DesktopNavButtons />
             </div>
 
-            {/* Mobile Nav */}
             <div className="md:hidden flex items-center gap-2">
               <ThemeToggle />
               <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
@@ -107,13 +152,7 @@ export function LoginButtons() {
                     <SheetTitle>Mobile Menu</SheetTitle>
                     <SheetDescription>Main navigation links for mobile.</SheetDescription>
                   </SheetHeader>
-                   <div className="flex flex-col space-y-4 pt-8">
-                     <Button variant="ghost" asChild className="w-full text-lg">
-                        <Link href="/about" onClick={()=>setIsMobileMenuOpen(false)}>About</Link>
-                      </Button>
-                      <Button variant="outline" onClick={() => handleAuthDialogOpen(null, 'signin')} className="w-full text-lg">Login</Button>
-                      <Button variant="default" onClick={() => handleAuthDialogOpen(null, 'signup')} className="w-full text-lg">Sign Up</Button>
-                   </div>
+                   <MobileNavButtons />
                 </SheetContent>
               </Sheet>
             </div>
@@ -153,7 +192,7 @@ export function LoginButtons() {
                   onClick={() => handleGuestPreview('teacher')}
                   disabled={isGuestLoading}
                 >
-                  {isGuestLoading ? <Loader2 className="mr-3 h-6 w-6 animate-spin"/> : <Briefcase className="mr-3 h-6 w-6 md:h-7 md:w-7" />}
+                  {isGuestLoading ? <Loader2 className="mr-3 h-6 w-6 animate-spin"/> : <Briefcase className="mr-3 h-6 w-6 md:h-7 md-w-7" />}
                   Preview as a Teacher
                 </Button>
               </div>
@@ -207,10 +246,18 @@ export function LoginButtons() {
       <AuthDialog
         key={authDialogKey}
         isOpen={isAuthDialogOpen}
-        onOpenChange={setIsAuthDialogOpen}
+        onOpenChange={(isOpen) => {
+            setIsAuthDialogOpen(isOpen);
+            // After a login/signup, redirect if successful
+            if (!isOpen && user && role) {
+                router.push(`/${role}/dashboard`);
+            }
+        }}
         role={selectedRole}
         defaultTab={defaultTab}
       />
     </>
   );
 }
+
+    

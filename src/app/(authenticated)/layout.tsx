@@ -6,6 +6,7 @@ import { useUserRole } from "@/hooks/useUserRole";
 import { useRouter } from "next/navigation";
 import React, { useEffect } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Loader2 } from "lucide-react";
 
 export default function AuthenticatedLayout({
   children,
@@ -23,14 +24,11 @@ export default function AuthenticatedLayout({
     }
   }, [isLoading, user, router]);
 
+  // If we're still loading or the user is not available yet, show a loading state.
   if (isLoading || !user) {
     return (
       <div className="flex items-center justify-center h-screen bg-background">
-        <div className="space-y-4 p-8 rounded-lg shadow-lg bg-card">
-          <Skeleton className="h-12 w-12 rounded-full" />
-          <Skeleton className="h-4 w-[250px]" />
-          <Skeleton className="h-4 w-[200px]" />
-        </div>
+        <Loader2 className="h-12 w-12 animate-spin text-primary" />
       </div>
     );
   }
@@ -44,3 +42,5 @@ export default function AuthenticatedLayout({
     </div>
   );
 }
+
+    

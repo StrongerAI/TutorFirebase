@@ -22,7 +22,7 @@ import {
   linkWithPopup,
 } from 'firebase/auth';
 import { auth, db } from '@/lib/firebase/config';
-import { doc, getDoc } from 'firebase/firestore';
+import { doc, getDoc, setDoc } from 'firebase/firestore';
 import type { UserRole } from '@/types';
 import { useUserRole } from '@/hooks/useUserRole';
 import { z } from 'zod';
@@ -39,6 +39,7 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
+import { useRouter } from 'next/navigation';
 
 interface AuthDialogProps {
   isOpen: boolean;
@@ -59,6 +60,7 @@ export function AuthDialog({ isOpen, onOpenChange, role: initialRole, defaultTab
   const { setRoleForUser } = useUserRole();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [dialogRole, setDialogRole] = useState<UserRole>(initialRole);
+  const router = useRouter();
 
   useEffect(() => {
     setDialogRole(initialRole);
@@ -72,6 +74,13 @@ export function AuthDialog({ isOpen, onOpenChange, role: initialRole, defaultTab
     },
   });
 
+  const handleSuccessfulAuth = (roleToRedirect: UserRole) => {
+    if (roleToRedirect) {
+      router.push(`/${roleToRedirect}/dashboard`);
+    }
+    onOpenChange(false);
+  }
+
   const handleEmailPasswordSignUp = async (
     values: z.infer<typeof authFormSchema>
   ) => {
@@ -80,12 +89,13 @@ export function AuthDialog({ isOpen, onOpenChange, role: initialRole, defaultTab
 
     try {
       if (currentUser && currentUser.isAnonymous) {
-        // LINKING: Upgrade anonymous user to a permanent account
         const credential = EmailAuthProvider.credential(values.email, values.password);
         await linkWithCredential(currentUser, credential);
-        toast({ title: 'Account Upgraded!', description: 'Your guest session has been saved to a permanent account.' });
+        const userDoc = await getDoc(doc(db, 'users', currentUser.uid));
+        const existingRole = userDoc.exists() ? userDoc.data().role : 'student'; // Fallback role
+        toast({ title: 'Account Upgraded!', description: 'Your guest session has been saved.' });
+        handleSuccessfulAuth(existingRole);
       } else {
-        // STANDARD SIGN-UP: Create a brand new user
         if (!dialogRole) {
             toast({ title: 'Role not selected', description: 'Please select a role before signing up.', variant: 'destructive'});
             setIsSubmitting(false);
@@ -97,9 +107,9 @@ export function AuthDialog({ isOpen, onOpenChange, role: initialRole, defaultTab
           values.password
         );
         await setRoleForUser(userCredential.user.uid, dialogRole);
-        toast({ title: 'Account Created!', description: 'Welcome! Redirecting you to your dashboard.' });
+        toast({ title: 'Account Created!', description: 'Welcome! Redirecting...' });
+        handleSuccessfulAuth(dialogRole);
       }
-      onOpenChange(false);
     } catch (error: any) {
       toast({
         title: 'Sign Up Failed',
@@ -116,13 +126,15 @@ export function AuthDialog({ isOpen, onOpenChange, role: initialRole, defaultTab
   ) => {
     setIsSubmitting(true);
     try {
-      await signInWithEmailAndPassword(
+      const userCredential = await signInWithEmailAndPassword(
         auth,
         values.email,
         values.password
       );
-      toast({ title: 'Signed In Successfully!', description: 'Welcome back! Redirecting you to your dashboard.' });
-      onOpenChange(false);
+      const userDoc = await getDoc(doc(db, 'users', userCredential.user.uid));
+      const existingRole = userDoc.exists() ? userDoc.data().role : 'student';
+      toast({ title: 'Signed In Successfully!', description: 'Welcome back! Redirecting...' });
+      handleSuccessfulAuth(existingRole);
     } catch (error: any) {
       toast({
         title: 'Sign In Failed',
@@ -141,13 +153,14 @@ export function AuthDialog({ isOpen, onOpenChange, role: initialRole, defaultTab
 
     try {
         if (currentUser && currentUser.isAnonymous) {
-          // LINKING: Upgrade anonymous user to a permanent Google user
           await linkWithPopup(currentUser, provider);
-          toast({ title: 'Account Upgraded!', description: 'Your guest session has been saved to your Google account.' });
+          const userDoc = await getDoc(doc(db, 'users', currentUser.uid));
+          const existingRole = userDoc.exists() ? userDoc.data().role : 'student';
+          toast({ title: 'Account Upgraded!', description: 'Your guest session has been saved.' });
+          handleSuccessfulAuth(existingRole);
         } else {
-          // STANDARD SIGN-IN or SIGN-UP
-          if (!dialogRole && !currentUser) { // Role is only required for brand new signups
-            toast({ title: 'Role not selected', description: 'Please select a role before signing in with Google.', variant: 'destructive'});
+          if (!dialogRole) {
+            toast({ title: 'Role not selected', description: 'Please select a role to continue.', variant: 'destructive'});
             setIsSubmitting(false);
             return;
           }
@@ -155,14 +168,15 @@ export function AuthDialog({ isOpen, onOpenChange, role: initialRole, defaultTab
           const userDocRef = doc(db, 'users', result.user.uid);
           const userDoc = await getDoc(userDocRef);
           
+          let userRole = dialogRole;
           if (!userDoc.exists()) {
-              // This is a new user sign-up, so we set their role.
               await setRoleForUser(result.user.uid, dialogRole);
+          } else {
+              userRole = userDoc.data().role;
           }
-          // For both new and existing users:
-          toast({ title: 'Signed In with Google!', description: 'Welcome! Redirecting you to your dashboard.' });
+          toast({ title: 'Signed In with Google!', description: 'Welcome! Redirecting...' });
+          handleSuccessfulAuth(userRole);
         }
-        onOpenChange(false);
     } catch (error: any) {
         toast({ title: 'Google Sign-In Failed', description: error.message, variant: 'destructive'});
     } finally {
@@ -295,3 +309,5 @@ export function AuthDialog({ isOpen, onOpenChange, role: initialRole, defaultTab
     </Dialog>
   );
 }
+
+    
