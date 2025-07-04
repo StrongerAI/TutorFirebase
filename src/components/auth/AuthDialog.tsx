@@ -18,7 +18,8 @@ import {
   GoogleAuthProvider,
   signInWithPopup,
 } from 'firebase/auth';
-import { auth } from '@/lib/firebase/config';
+import { auth, db } from '@/lib/firebase/config';
+import { doc, getDoc } from 'firebase/firestore';
 import type { UserRole } from '@/types';
 import { useUserRole } from '@/hooks/useUserRole';
 import { z } from 'zod';
@@ -82,7 +83,8 @@ export function AuthDialog({ isOpen, onOpenChange, role: initialRole, defaultTab
         values.email,
         values.password
       );
-      setRoleForUser(userCredential.user.uid, dialogRole);
+      // Set role in Firestore for the new user
+      await setRoleForUser(userCredential.user.uid, dialogRole);
       toast({ title: 'Account Created!', description: 'Welcome! Redirecting you to your dashboard.' });
       onOpenChange(false);
     } catch (error: any) {
@@ -128,10 +130,16 @@ export function AuthDialog({ isOpen, onOpenChange, role: initialRole, defaultTab
     const provider = new GoogleAuthProvider();
     try {
         const result = await signInWithPopup(auth, provider);
-        const isNewUser = result.user.metadata.creationTime === result.user.metadata.lastSignInTime;
-        if(isNewUser) {
-            setRoleForUser(result.user.uid, dialogRole);
+        
+        // Check if the user document already exists in Firestore.
+        const userDocRef = doc(db, 'users', result.user.uid);
+        const userDoc = await getDoc(userDocRef);
+        
+        // If the user document does not exist, it's a new user, so set their role.
+        if (!userDoc.exists()) {
+            await setRoleForUser(result.user.uid, dialogRole);
         }
+
         toast({ title: 'Signed In with Google!', description: 'Welcome! Redirecting you to your dashboard.' });
         onOpenChange(false);
     } catch (error: any) {
