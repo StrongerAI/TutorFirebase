@@ -14,7 +14,7 @@ interface UserRoleContextType {
   user: User | null;
   role: UserRole;
   setRoleForUser: (uid: string, role: UserRole) => Promise<void>;
-  setGuestRole: (role: UserRole) => Promise<void>;
+  setGuestRole: (role: UserRole) => Promise<boolean>;
   logout: () => void;
   isLoading: boolean;
 }
@@ -36,9 +36,11 @@ export const UserRoleProvider = ({ children }: { children: ReactNode }) => {
         const userDocRef = doc(db, "users", firebaseUser.uid);
         const userDoc = await getDoc(userDocRef);
         if (userDoc.exists()) {
-          setRole(userDoc.data().role as UserRole);
+          const userData = userDoc.data();
+          setRole(userData.role as UserRole);
         } else {
-          setRole(null);
+          // This case might happen during the small gap between user creation and doc creation
+          // We don't set role to null immediately, we wait for the doc to be created.
         }
       } else {
         setUser(null);
@@ -55,7 +57,7 @@ export const UserRoleProvider = ({ children }: { children: ReactNode }) => {
     try {
       const userDocRef = doc(db, "users", uid);
       await setDoc(userDocRef, { role: newRole });
-      setRole(newRole);
+      setRole(newRole); // Eagerly update role in state
     } catch (error) {
       console.error("Failed to set user role in Firestore:", error);
       toast({
@@ -66,18 +68,18 @@ export const UserRoleProvider = ({ children }: { children: ReactNode }) => {
     }
   }, [toast]);
 
-  const setGuestRole = useCallback(async (newRole: UserRole) => {
-    if (user || !newRole) return;
+  const setGuestRole = useCallback(async (newRole: UserRole): Promise<boolean> => {
+    if (user || !newRole) return false;
 
     setIsLoading(true);
     try {
       const userCredential = await signInAnonymously(auth);
-      
-      const userDocRef = doc(db, "users", userCredential.user.uid);
-      await setDoc(userDocRef, { role: newRole });
-
-      setUser(userCredential.user);
-      setRole(newRole);
+      // After anonymous sign-in, the onAuthStateChanged listener will fire.
+      // We then immediately set the role for this new user.
+      await setDoc(doc(db, "users", userCredential.user.uid), { role: newRole });
+      // The listener will pick up the user, and then the role, triggering the redirect effect on the login page.
+      // No need to set state here as the listener handles it.
+      return true;
     } catch (error) {
       console.error("Failed to create anonymous user:", error);
       toast({
@@ -85,8 +87,8 @@ export const UserRoleProvider = ({ children }: { children: ReactNode }) => {
         description: "Could not start a guest session. Please try again.",
         variant: "destructive",
       });
-    } finally {
       setIsLoading(false);
+      return false;
     }
   }, [user, toast]);
 
@@ -100,15 +102,6 @@ export const UserRoleProvider = ({ children }: { children: ReactNode }) => {
       console.error("Error signing out:", error);
     }
   };
-  
-  useEffect(() => {
-    if (!isLoading && user && role) {
-      const targetPath = `/${role}/dashboard`;
-      if (window.location.pathname !== targetPath) {
-        router.push(targetPath);
-      }
-    }
-  }, [user, role, isLoading, router]);
 
   return (
     <UserRoleContext.Provider value={{ user, role, setRoleForUser, setGuestRole, logout, isLoading }}>

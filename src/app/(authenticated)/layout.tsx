@@ -12,13 +12,18 @@ export default function AuthenticatedLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const { user, role, isLoading } = useUserRole();
+  const { user, isLoading } = useUserRole();
   const router = useRouter();
 
-  // The authentication check has been removed to allow guest access.
-  // The skeleton remains to provide a good loading experience while role is determined.
+  useEffect(() => {
+    // If loading is finished and there's no user, they shouldn't be here.
+    // Redirect them back to the login page.
+    if (!isLoading && !user) {
+      router.push("/");
+    }
+  }, [isLoading, user, router]);
 
-  if (isLoading) {
+  if (isLoading || !user) {
     return (
       <div className="flex items-center justify-center h-screen bg-background">
         <div className="space-y-4 p-8 rounded-lg shadow-lg bg-card">
@@ -31,13 +36,8 @@ export default function AuthenticatedLayout({
   }
 
   return (
-    <div className="flex flex-col h-screen w-full"> {/* Changed min-h-screen to h-screen */}
+    <div className="flex flex-col h-screen w-full">
       <AppHeader />
-      {/* 
-        Changed flex-grow to flex-1 to make main content area take up remaining vertical space.
-        Removed padding from here, individual pages or ChatInterface can manage their own padding.
-        Added overflow-hidden to prevent double scrollbars if children manage their own scroll.
-      */}
       <main className="flex-1 flex flex-col bg-background overflow-hidden">
         {children}
       </main>

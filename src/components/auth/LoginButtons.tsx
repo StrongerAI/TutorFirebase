@@ -3,11 +3,11 @@
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { GraduationCap, Briefcase, Sparkles, Users, BarChart, Menu } from "lucide-react";
+import { GraduationCap, Briefcase, Sparkles, Users, BarChart, Menu, Loader2 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { APP_NAME } from "@/lib/constants";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import type { UserRole } from "@/types";
 import { AuthDialog } from "./AuthDialog";
 import { useUserRole } from "@/hooks/useUserRole";
@@ -21,9 +21,18 @@ export function LoginButtons() {
   const [defaultTab, setDefaultTab] = useState<'signin' | 'signup'>('signin');
   const [authDialogKey, setAuthDialogKey] = useState(Date.now());
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isGuestLoading, setIsGuestLoading] = useState(false);
 
-  const { setGuestRole } = useUserRole();
+  const { user, role, isLoading, setGuestRole } = useUserRole();
   const router = useRouter();
+
+  // If a user is already logged in, redirect them to their dashboard.
+  useEffect(() => {
+    if (!isLoading && user && role) {
+      router.push(`/${role}/dashboard`);
+    }
+  }, [isLoading, user, role, router]);
+
 
   const handleAuthDialogOpen = (role: UserRole, tab: 'signin' | 'signup' = 'signup') => {
     setSelectedRole(role);
@@ -35,12 +44,28 @@ export function LoginButtons() {
 
   const handleGuestPreview = async (role: UserRole) => {
     if (role) {
-      await setGuestRole(role);
-      // The redirection will be handled by the effect in UserRoleContext
+      setIsGuestLoading(true);
+      const success = await setGuestRole(role);
+      if (success) {
+        // The onAuthStateChanged listener in the context will now handle
+        // updating the user/role state, and the useEffect above will redirect.
+      } else {
+        // Toast message is handled within the context on error
+        setIsGuestLoading(false);
+      }
     }
   };
 
   const homePath = "/";
+
+  // Prevent flash of login page for already logged-in users
+  if (isLoading || (user && role)) {
+     return (
+      <div className="flex items-center justify-center h-screen bg-background">
+        <Loader2 className="h-12 w-12 animate-spin text-primary" />
+      </div>
+    );
+  }
 
   return (
     <>
@@ -116,8 +141,9 @@ export function LoginButtons() {
                   size="lg"
                   className="w-full py-6 text-base md:text-lg rounded-lg transform transition-all hover:scale-105 hover:shadow-xl focus:ring-4 focus:ring-primary/50"
                   onClick={() => handleGuestPreview('student')}
+                  disabled={isGuestLoading}
                 >
-                  <GraduationCap className="mr-3 h-6 w-6 md:h-7 md:w-7" />
+                  {isGuestLoading ? <Loader2 className="mr-3 h-6 w-6 animate-spin"/> : <GraduationCap className="mr-3 h-6 w-6 md:h-7 md-w-7" />}
                   Preview as a Student
                 </Button>
                 <Button
@@ -125,8 +151,9 @@ export function LoginButtons() {
                   size="lg"
                   className="w-full py-6 text-base md:text-lg rounded-lg border-2 border-primary text-primary hover:bg-primary/10 transform transition-all hover:scale-105 hover:shadow-xl focus:ring-4 focus:ring-primary/50"
                   onClick={() => handleGuestPreview('teacher')}
+                  disabled={isGuestLoading}
                 >
-                  <Briefcase className="mr-3 h-6 w-6 md:h-7 md:w-7" />
+                  {isGuestLoading ? <Loader2 className="mr-3 h-6 w-6 animate-spin"/> : <Briefcase className="mr-3 h-6 w-6 md:h-7 md:w-7" />}
                   Preview as a Teacher
                 </Button>
               </div>
