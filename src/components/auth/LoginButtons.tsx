@@ -163,7 +163,7 @@ export function LoginButtons() {
 
         <CardHeader className="text-center p-8 md:p-12 bg-primary/5">
           <CardTitle className="text-4xl md:text-5xl font-extrabold font-headline mt-8">
-            <span className="bg-gradient-to-r from-primary via-tertiary to-accent text-transparent bg-clip-text">
+            <span className="bg-gradient-to-br from-primary via-accent to-tertiary text-transparent bg-clip-text">
               {APP_NAME}
             </span>
           </CardTitle>
