@@ -3,7 +3,7 @@
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { GraduationCap, Briefcase, Sparkles, Users, BarChart, Menu, Loader2, LogOut, LayoutDashboard } from "lucide-react";
+import { GraduationCap, Briefcase, Sparkles, Users, BarChart, Menu, Loader2 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { APP_NAME } from "@/lib/constants";
@@ -23,8 +23,16 @@ export function LoginButtons() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isGuestLoading, setIsGuestLoading] = useState(false);
 
-  const { user, role, isLoading, setGuestRole, logout } = useUserRole();
+  const { user, role, isLoading, setGuestRole } = useUserRole();
   const router = useRouter();
+  
+  // This effect handles redirecting logged-in users to their dashboard
+  useEffect(() => {
+    if (!isLoading && user && role) {
+      router.push(`/${role}/dashboard`);
+    }
+  }, [isLoading, user, role, router]);
+
 
   const handleAuthDialogOpen = (role: UserRole, tab: 'signin' | 'signup' = 'signup') => {
     setSelectedRole(role);
@@ -37,18 +45,16 @@ export function LoginButtons() {
   const handleGuestPreview = async (role: UserRole) => {
     if (role) {
       setIsGuestLoading(true);
-      const success = await setGuestRole(role);
-      if (success) {
-        router.push(`/${role}/dashboard`);
-      }
-      // setIsLoading is handled inside setGuestRole now.
+      await setGuestRole(role);
+      // The redirect is now handled by the useEffect and loading screen above
     }
   };
 
   const homePath = "/";
 
-  // Show a loading screen while checking auth.
-  if (isLoading) {
+  // Show a loading screen while checking auth or if a user is found and we are about to redirect.
+  // This prevents the flash of the landing page content for logged-in users.
+  if (isLoading || (user && role)) {
      return (
       <div className="flex items-center justify-center h-screen bg-background">
         <Loader2 className="h-12 w-12 animate-spin text-primary" />
@@ -56,57 +62,28 @@ export function LoginButtons() {
     );
   }
 
-  // Component to render desktop nav buttons based on auth state
-  const DesktopNavButtons = () => {
-    if (user && role) {
-        return (
-            <>
-                <Button variant="ghost" asChild>
-                    <Link href={`/${role}/dashboard`}>Dashboard</Link>
-                </Button>
-                <Button variant="default" onClick={logout}>Logout</Button>
-                <ThemeToggle />
-            </>
-        )
-    }
-    return (
-        <>
-            <Button variant="ghost" asChild>
-                <Link href="/about">About</Link>
-            </Button>
-            <Button variant="ghost" onClick={() => handleAuthDialogOpen(null, 'signin')}>Login</Button>
-            <Button variant="default" onClick={() => handleAuthDialogOpen(null, 'signup')}>Sign Up</Button>
-            <ThemeToggle />
-        </>
-    )
-  }
+  // If we've passed the loading screen, the user is definitely logged out.
+  // These components render the navigation buttons for a logged-out user.
+  const DesktopNavButtons = () => (
+      <>
+          <Button variant="ghost" asChild>
+              <Link href="/about">About</Link>
+          </Button>
+          <Button variant="ghost" onClick={() => handleAuthDialogOpen(null, 'signin')}>Login</Button>
+          <Button variant="default" onClick={() => handleAuthDialogOpen(null, 'signup')}>Sign Up</Button>
+          <ThemeToggle />
+      </>
+  );
 
-  // Component to render mobile nav buttons based on auth state
-  const MobileNavButtons = () => {
-    if (user && role) {
-        return (
-            <div className="flex flex-col space-y-4 pt-8">
-                 <Button variant="outline" asChild className="w-full text-lg">
-                    <Link href={`/${role}/dashboard`} onClick={()=>setIsMobileMenuOpen(false)}>
-                        <LayoutDashboard className="mr-2"/>Dashboard
-                    </Link>
-                </Button>
-                 <Button variant="default" onClick={() => {logout(); setIsMobileMenuOpen(false);}} className="w-full text-lg">
-                    <LogOut className="mr-2"/>Logout
-                 </Button>
-            </div>
-        )
-    }
-    return (
-        <div className="flex flex-col space-y-4 pt-8">
-            <Button variant="ghost" asChild className="w-full text-lg">
-                <Link href="/about" onClick={()=>setIsMobileMenuOpen(false)}>About</Link>
-            </Button>
-            <Button variant="outline" onClick={() => handleAuthDialogOpen(null, 'signin')} className="w-full text-lg">Login</Button>
-            <Button variant="default" onClick={() => handleAuthDialogOpen(null, 'signup')} className="w-full text-lg">Sign Up</Button>
-        </div>
-    )
-  }
+  const MobileNavButtons = () => (
+      <div className="flex flex-col space-y-4 pt-8">
+          <Button variant="ghost" asChild className="w-full text-lg">
+              <Link href="/about" onClick={()=>setIsMobileMenuOpen(false)}>About</Link>
+          </Button>
+          <Button variant="outline" onClick={() => handleAuthDialogOpen(null, 'signin')} className="w-full text-lg">Login</Button>
+          <Button variant="default" onClick={() => handleAuthDialogOpen(null, 'signup')} className="w-full text-lg">Sign Up</Button>
+      </div>
+  );
 
   return (
     <>
