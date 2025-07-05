@@ -58,7 +58,11 @@ export function AppHeader() {
                <SheetTitle className="sr-only">Main Navigation</SheetTitle>
                <SheetDescription className="sr-only">App main navigation links</SheetDescription>
               <Link href="/" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center gap-3 text-lg font-semibold">
-                  <Image src="https://placehold.co/32x32/9775FA/FFFFFF.png?text=TT" alt={`${APP_NAME} Logo`} width={32} height={32} className="rounded-md" data-ai-hint="logo education" />
+                  <div className="w-8 h-8 rounded-md flex items-center justify-center bg-card border">
+                      <span className="font-headline font-bold text-lg bg-gradient-to-br from-blue-700 via-purple-700 to-pink-700 text-transparent bg-clip-text [text-shadow:0_0_8px_hsl(var(--primary)/0.5)]">
+                          TT
+                      </span>
+                  </div>
               </Link>
             </SheetHeader>
             <nav className="grid gap-2 p-4">
@@ -90,7 +94,11 @@ export function AppHeader() {
           </SheetContent>
         </Sheet>
         <Link href="/" className="hidden md:flex items-center gap-2">
-            <Image src="https://placehold.co/32x32/9775FA/FFFFFF.png?text=TT" alt={`${APP_NAME} Logo`} width={28} height={28} className="rounded-md" data-ai-hint="logo education" />
+            <div className="w-7 h-7 rounded-md flex items-center justify-center bg-card border">
+                <span className="font-headline font-bold text-base bg-gradient-to-br from-blue-700 via-purple-700 to-pink-700 text-transparent bg-clip-text [text-shadow:0_0_6px_hsl(var(--primary)/0.5)]">
+                    TT
+                </span>
+            </div>
         </Link>
       </div>
 

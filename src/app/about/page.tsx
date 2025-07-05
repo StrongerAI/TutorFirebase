@@ -19,14 +19,11 @@ export default function AboutPage() {
             <nav className="p-4 border-b border-border/70 sticky top-0 bg-card z-10">
                 <div className="container mx-auto flex justify-between items-center">
                     <Link href={homePath} className="flex items-center gap-2">
-                    <Image
-                        src="https://placehold.co/32x32/9775FA/FFFFFF.png?text=TT"
-                        alt={`${APP_NAME} Logo`}
-                        width={32}
-                        height={32}
-                        className="rounded-md"
-                        data-ai-hint="logo education"
-                    />
+                    <div className="w-8 h-8 rounded-md flex items-center justify-center bg-card border">
+                        <span className="font-headline font-bold text-lg bg-gradient-to-br from-blue-700 via-purple-700 to-pink-700 text-transparent bg-clip-text [text-shadow:0_0_8px_hsl(var(--primary)/0.5)]">
+                            TT
+                        </span>
+                    </div>
                     </Link>
                     
                     {/* Desktop Nav */}
