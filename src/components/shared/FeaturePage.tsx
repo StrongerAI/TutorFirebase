@@ -18,13 +18,18 @@ export function FeaturePage({ title, description, icon: Icon, children, classNam
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div className="flex items-center gap-3">
           {Icon && <Icon className="h-8 w-8 text-primary" />}
-          <div>
-            <h1 className="text-2xl md:text-3xl font-bold font-headline tracking-tight">{title}</h1>
-            {description && <p className="text-lg text-foreground/80">{description}</p>}
-          </div>
+          <h1 className="text-2xl md:text-3xl font-bold font-headline tracking-tight">{title}</h1>
         </div>
         {actionButtons && <div className="flex gap-2">{actionButtons}</div>}
       </div>
+
+      {description && (
+        <Card className="bg-primary/10 border-l-4 border-primary shadow-none">
+          <CardContent className="p-4">
+            <p className="text-lg font-medium text-foreground">{description}</p>
+          </CardContent>
+        </Card>
+      )}
       
       <Card className="shadow-lg rounded-xl">
         <CardContent className="p-4 sm:p-6">
