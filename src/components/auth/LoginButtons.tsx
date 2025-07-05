@@ -26,15 +26,6 @@ export function LoginButtons() {
   const { user, role, isLoading, setGuestRole, logout } = useUserRole();
   const router = useRouter();
 
-  useEffect(() => {
-    // If we're done loading, there's a user and a role, and we are on the landing page,
-    // redirect to the dashboard.
-    if (!isLoading && user && role && window.location.pathname === '/') {
-      router.push(`/${role}/dashboard`);
-    }
-  }, [isLoading, user, role, router]);
-
-
   const handleAuthDialogOpen = (role: UserRole, tab: 'signin' | 'signup' = 'signup') => {
     setSelectedRole(role);
     setDefaultTab(tab);
