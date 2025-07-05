@@ -7,13 +7,14 @@ import { GraduationCap, Briefcase, Sparkles, Users, BarChart, Menu, Loader2 } fr
 import Image from "next/image";
 import Link from "next/link";
 import { APP_NAME } from "@/lib/constants";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import type { UserRole } from "@/types";
 import { AuthDialog } from "./AuthDialog";
 import { useUserRole } from "@/hooks/useUserRole";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription, SheetTrigger } from "@/components/ui/sheet";
 import { ThemeToggle } from "@/components/layout/ThemeToggle";
-import { Skeleton } from "@/components/ui/skeleton";
+import { useRouter } from "next/navigation";
+
 
 export function LoginButtons() {
   const [isAuthDialogOpen, setIsAuthDialogOpen] = useState(false);
@@ -23,7 +24,8 @@ export function LoginButtons() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isGuestLoading, setIsGuestLoading] = useState(false);
 
-  const { user, role, isLoading, setGuestRole, logout } = useUserRole();
+  const { user, role, isLoading: isAuthLoading, setGuestRole, logout } = useUserRole();
+  const router = useRouter();
   
   const handleAuthDialogOpen = (role: UserRole, tab: 'signin' | 'signup' = 'signup') => {
     setSelectedRole(role);
@@ -36,23 +38,36 @@ export function LoginButtons() {
   const handleGuestPreview = async (role: UserRole) => {
     if (role) {
       setIsGuestLoading(true);
-      await setGuestRole(role);
+      try {
+        await setGuestRole(role);
+      } catch (error) {
+        console.error("Guest preview failed:", error);
+      } finally {
+        setIsGuestLoading(false);
+      }
     }
   };
 
   const homePath = "/";
 
+  useEffect(() => {
+    // If auth is not loading and we have a user and role, redirect.
+    if (!isAuthLoading && user && role) {
+      router.push(`/${role}/dashboard`);
+    }
+  }, [isAuthLoading, user, role, router]);
+
+  // Loading state for the whole component
+  if (isAuthLoading) {
+    return (
+      <div className="flex items-center justify-center h-screen bg-background">
+        <Loader2 className="h-12 w-12 animate-spin text-primary" />
+      </div>
+    );
+  }
+
   // These components render navigation buttons that adapt to the user's authentication state.
   const DesktopNavButtons = () => {
-    if (isLoading) {
-      return (
-          <div className="flex items-center space-x-2">
-            <Skeleton className="h-9 w-20" />
-            <Skeleton className="h-9 w-20" />
-          </div>
-      );
-    }
-
     if (user && role) {
       return (
         <>
@@ -78,15 +93,6 @@ export function LoginButtons() {
   };
 
   const MobileNavButtons = () => {
-    if (isLoading) {
-      return (
-        <div className="flex flex-col space-y-4 pt-8">
-          <Skeleton className="h-10 w-full" />
-          <Skeleton className="h-10 w-full" />
-        </div>
-      );
-    }
-
     if (user && role) {
        return (
             <div className="flex flex-col space-y-4 pt-8">
