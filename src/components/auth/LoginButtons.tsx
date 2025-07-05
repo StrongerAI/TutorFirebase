@@ -1,4 +1,3 @@
-
 "use client";
 
 import { Button } from "@/components/ui/button";
@@ -92,7 +91,7 @@ export function LoginButtons() {
             <Button variant="ghost" onClick={() => handleAuthDialogOpen(null, 'signin')}>Login</Button>
             <Button
                 onClick={() => handleAuthDialogOpen(null, 'signup')}
-                className="bg-gradient-to-br from-blue-700 via-purple-700 to-pink-700 text-primary-foreground shadow-md hover:shadow-lg hover:opacity-95 transition-all"
+                className="bg-gradient-to-br from-blue-500 via-purple-500 to-pink-500 text-primary-foreground shadow-md hover:shadow-lg hover:opacity-95 transition-all"
             >
                 Sign Up
             </Button>
@@ -120,7 +119,7 @@ export function LoginButtons() {
           <Button variant="outline" onClick={() => handleAuthDialogOpen(null, 'signin')} className="w-full text-lg">Login</Button>
           <Button
             onClick={() => handleAuthDialogOpen(null, 'signup')}
-            className="w-full text-lg bg-gradient-to-br from-blue-700 via-purple-700 to-pink-700 text-primary-foreground shadow-md hover:shadow-lg hover:opacity-95 transition-all"
+            className="w-full text-lg bg-gradient-to-br from-blue-500 via-purple-500 to-pink-500 text-primary-foreground shadow-md hover:shadow-lg hover:opacity-95 transition-all"
           >
             Sign Up
           </Button>
@@ -135,7 +134,7 @@ export function LoginButtons() {
         <nav className="p-4 border-b border-border/70 sticky top-0 bg-card z-10">
           <div className="container mx-auto flex justify-between items-center">
             <Link href={homePath} className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded-md flex items-center justify-center bg-gradient-to-br from-blue-700 via-purple-700 to-pink-700 shadow-md">
+              <div className="w-8 h-8 rounded-md flex items-center justify-center bg-gradient-to-br from-blue-500 via-purple-500 to-pink-500 shadow-md">
                   <span className="font-headline font-bold text-lg text-primary-foreground">
                       TT
                   </span>
@@ -168,7 +167,7 @@ export function LoginButtons() {
 
         <CardHeader className="text-center p-8 md:p-12 bg-primary/5">
           <CardTitle className="text-4xl md:text-5xl font-extrabold font-headline mt-8">
-            <span className="bg-gradient-to-br from-blue-700 via-purple-700 to-pink-700 text-transparent bg-clip-text [text-shadow:0_0_12px_hsl(var(--primary)/0.5)]">
+            <span className="bg-gradient-to-br from-blue-500 via-purple-500 to-pink-500 text-transparent bg-clip-text [text-shadow:0_0_12px_hsl(var(--primary)/0.5)]">
               {APP_NAME}
             </span>
           </CardTitle>
@@ -186,7 +185,7 @@ export function LoginButtons() {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                 <Button
                   size="lg"
-                  className="w-full py-6 text-base md:text-lg rounded-lg transform transition-all hover:scale-105 focus:ring-4 focus:ring-primary/50 bg-gradient-to-br from-blue-700 via-purple-700 to-pink-700 text-primary-foreground shadow-md hover:shadow-lg hover:opacity-95"
+                  className="w-full py-6 text-base md:text-lg rounded-lg transform transition-all hover:scale-105 focus:ring-4 focus:ring-primary/50 bg-gradient-to-br from-blue-500 via-purple-500 to-pink-500 text-primary-foreground shadow-md hover:shadow-lg hover:opacity-95"
                   onClick={() => handleGuestPreview('student')}
                   disabled={isGuestLoading}
                 >
@@ -195,7 +194,7 @@ export function LoginButtons() {
                 </Button>
                 <Button
                   size="lg"
-                  className="w-full py-6 text-base md:text-lg rounded-lg transform transition-all hover:scale-105 focus:ring-4 focus:ring-primary/50 bg-gradient-to-br from-blue-700 via-purple-700 to-pink-700 text-primary-foreground shadow-md hover:shadow-lg hover:opacity-95"
+                  className="w-full py-6 text-base md:text-lg rounded-lg transform transition-all hover:scale-105 focus:ring-4 focus:ring-primary/50 bg-gradient-to-br from-blue-500 via-purple-500 to-pink-500 text-primary-foreground shadow-md hover:shadow-lg hover:opacity-95"
                   onClick={() => handleGuestPreview('teacher')}
                   disabled={isGuestLoading}
                 >
@@ -207,7 +206,7 @@ export function LoginButtons() {
 
             <div className="pt-8 border-t border-border/70">
               <h3 className="text-2xl md:text-3xl font-bold font-headline text-center mb-10 text-foreground">
-                Why Choose <span className="bg-gradient-to-br from-blue-700 via-purple-700 to-pink-700 text-transparent bg-clip-text [text-shadow:0_0_12px_hsl(var(--primary)/0.5)]">{APP_NAME}</span>?
+                Why Choose <span className="bg-gradient-to-br from-blue-500 via-purple-500 to-pink-500 text-transparent bg-clip-text [text-shadow:0_0_12px_hsl(var(--primary)/0.5)]">{APP_NAME}</span>?
               </h3>
               <div className="grid md:grid-cols-3 gap-6 text-left md:text-center">
                 {[
