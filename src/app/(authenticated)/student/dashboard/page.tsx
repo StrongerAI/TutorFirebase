@@ -1,8 +1,10 @@
+
 // src/app/(authenticated)/student/dashboard/page.tsx
 "use client";
 
 import { DashboardMetricCard } from "@/components/shared/DashboardMetricCard";
 import { FeaturePage } from "@/components/shared/FeaturePage";
+import { useUserRole } from "@/hooks/useUserRole";
 import { BookOpen, TrendingUp, Activity, LayoutDashboard, CheckCircle } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
@@ -44,8 +46,15 @@ const pieChartData = [
 
 
 export default function StudentDashboardPage() {
+  const { user } = useUserRole();
+  const userName = user?.displayName?.split(' ')[0] || user?.email?.split('@')[0] || "Student";
+
   return (
-    <FeaturePage title="Student Dashboard" icon={LayoutDashboard} description="Your personalized learning overview.">
+    <FeaturePage 
+      title="Student Dashboard" 
+      icon={LayoutDashboard} 
+      description={`Welcome back, ${userName}! Your personalized learning overview.`}
+    >
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
         <DashboardMetricCard
           title="Active Courses"

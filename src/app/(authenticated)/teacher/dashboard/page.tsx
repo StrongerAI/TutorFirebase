@@ -1,8 +1,10 @@
+
 // src/app/(authenticated)/teacher/dashboard/page.tsx
 "use client";
 
 import { DashboardMetricCard } from "@/components/shared/DashboardMetricCard";
 import { FeaturePage } from "@/components/shared/FeaturePage";
+import { useUserRole } from "@/hooks/useUserRole";
 import { Users, FileCheck, Presentation, LayoutDashboard } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import {
@@ -42,8 +44,15 @@ const gradingStatusData = [
 ];
 
 export default function TeacherDashboardPage() {
+  const { user } = useUserRole();
+  const userName = user?.displayName?.split(' ')[0] || user?.email?.split('@')[0] || "Teacher";
+
   return (
-    <FeaturePage title="Teacher Dashboard" icon={LayoutDashboard} description="Insights to enhance your teaching effectiveness.">
+    <FeaturePage 
+      title="Teacher Dashboard" 
+      icon={LayoutDashboard} 
+      description={`Welcome back, ${userName}! Insights to enhance your teaching effectiveness.`}
+    >
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
         <DashboardMetricCard
           title="Active Classes"

@@ -26,13 +26,12 @@ export function LoginButtons() {
   const { user, role, isLoading, setGuestRole, logout } = useUserRole();
   const router = useRouter();
 
-  // This effect will run ONLY after a guest preview button is clicked.
-  // It waits for the user/role to be set, then redirects to the dashboard.
+  // Redirect any logged-in user to their dashboard immediately.
   useEffect(() => {
-    if (isGuestLoading && user && role) {
+    if (!isLoading && user && role) {
       router.push(`/${role}/dashboard`);
     }
-  }, [user, role, isGuestLoading, router]);
+  }, [isLoading, user, role, router]);
 
 
   const handleAuthDialogOpen = (role: UserRole, tab: 'signin' | 'signup' = 'signup') => {
@@ -46,20 +45,16 @@ export function LoginButtons() {
   const handleGuestPreview = async (role: UserRole) => {
     if (role) {
       setIsGuestLoading(true);
-      // setGuestRole now triggers the useEffect above on success
-      const success = await setGuestRole(role);
-      // If it fails, the toast is shown in the context, and we stop loading.
-      if (!success) {
-        setIsGuestLoading(false);
-      }
+      await setGuestRole(role);
+      // The useEffect above will handle the redirect once the user and role are set.
     }
   };
 
   const homePath = "/";
 
-  // Show a loading screen only during the initial auth check.
-  // After that, the page will render regardless of auth state.
-  if (isLoading) {
+  // Show a loading screen while checking auth or redirecting.
+  // This prevents the page from flashing before the redirect.
+  if (isLoading || (user && role)) {
      return (
       <div className="flex items-center justify-center h-screen bg-background">
         <Loader2 className="h-12 w-12 animate-spin text-primary" />
@@ -259,5 +254,3 @@ export function LoginButtons() {
     </>
   );
 }
-
-    
