@@ -7,7 +7,7 @@ import { GraduationCap, Briefcase, Sparkles, Users, BarChart, Menu, Loader2 } fr
 import Image from "next/image";
 import Link from "next/link";
 import { APP_NAME } from "@/lib/constants";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import type { UserRole } from "@/types";
 import { AuthDialog } from "./AuthDialog";
 import { useUserRole } from "@/hooks/useUserRole";
@@ -35,11 +35,14 @@ export function LoginButtons() {
     setIsMobileMenuOpen(false); // Close mobile menu if open
   };
 
-  const handleGuestPreview = async (role: UserRole) => {
-    if (role) {
+  const handleGuestPreview = async (roleToPreview: UserRole) => {
+    if (roleToPreview) {
       setIsGuestLoading(true);
       try {
-        await setGuestRole(role);
+        const success = await setGuestRole(roleToPreview);
+        if (success) {
+            router.push(`/${roleToPreview}/dashboard`);
+        }
       } catch (error) {
         console.error("Guest preview failed:", error);
       } finally {
@@ -49,13 +52,6 @@ export function LoginButtons() {
   };
 
   const homePath = "/";
-
-  useEffect(() => {
-    // If auth is not loading and we have a user and role, redirect.
-    if (!isAuthLoading && user && role) {
-      router.push(`/${role}/dashboard`);
-    }
-  }, [isAuthLoading, user, role, router]);
 
   // Loading state for the whole component
   if (isAuthLoading) {
