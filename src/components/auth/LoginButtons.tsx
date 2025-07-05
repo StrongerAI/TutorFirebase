@@ -7,7 +7,7 @@ import { GraduationCap, Briefcase, Sparkles, Users, BarChart, Menu, Loader2 } fr
 import Image from "next/image";
 import Link from "next/link";
 import { APP_NAME } from "@/lib/constants";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import type { UserRole } from "@/types";
 import { AuthDialog } from "./AuthDialog";
 import { useUserRole } from "@/hooks/useUserRole";
@@ -23,10 +23,25 @@ export function LoginButtons() {
   const [authDialogKey, setAuthDialogKey] = useState(Date.now());
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isGuestLoading, setIsGuestLoading] = useState(false);
+  const [isInitialLoad, setIsInitialLoad] = useState(true);
 
   const { user, role, isLoading: isAuthLoading, setGuestRole, logout } = useUserRole();
   const router = useRouter();
   
+  useEffect(() => {
+    // If auth is no longer loading, the initial load is complete.
+    if (!isAuthLoading) {
+      setIsInitialLoad(false);
+    }
+  }, [isAuthLoading]);
+  
+  useEffect(() => {
+    // This effect handles the redirect after a guest logs in.
+    if (user && role && user.isAnonymous) {
+      router.push(`/${role}/dashboard`);
+    }
+  }, [user, role, router]);
+
   const handleAuthDialogOpen = (role: UserRole, tab: 'signin' | 'signup' = 'signup') => {
     setSelectedRole(role);
     setDefaultTab(tab);
@@ -38,29 +53,23 @@ export function LoginButtons() {
   const handleGuestPreview = async (roleToPreview: UserRole) => {
     if (roleToPreview) {
       setIsGuestLoading(true);
-      try {
-        const success = await setGuestRole(roleToPreview);
-        if (success) {
-            router.push(`/${roleToPreview}/dashboard`);
-        }
-      } catch (error) {
-        console.error("Guest preview failed:", error);
-      } finally {
-        setIsGuestLoading(false);
-      }
+      await setGuestRole(roleToPreview);
+      // The useEffect hook above will handle the redirect.
+      setIsGuestLoading(false);
     }
   };
 
   const homePath = "/";
 
-  // Loading state for the whole component
-  if (isAuthLoading) {
+  // While checking auth status on initial load, show a spinner.
+  if (isInitialLoad) {
     return (
       <div className="flex items-center justify-center h-screen bg-background">
         <Loader2 className="h-12 w-12 animate-spin text-primary" />
       </div>
     );
   }
+
 
   // These components render navigation buttons that adapt to the user's authentication state.
   const DesktopNavButtons = () => {
@@ -153,8 +162,10 @@ export function LoginButtons() {
         </nav>
 
         <CardHeader className="text-center p-8 md:p-12 bg-primary/5">
-          <CardTitle className="text-4xl md:text-5xl font-extrabold font-headline text-primary mt-8">
-            {APP_NAME}
+          <CardTitle className="text-4xl md:text-5xl font-extrabold font-headline mt-8">
+            <span className="bg-gradient-to-r from-primary via-tertiary to-accent text-transparent bg-clip-text">
+              {APP_NAME}
+            </span>
           </CardTitle>
           <CardDescription className="text-lg md:text-xl text-muted-foreground mt-3">
             AI-Powered Tutoring Platform

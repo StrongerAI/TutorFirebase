@@ -32,12 +32,13 @@ body {
     --accent: 250 67% 86%; /* #BEB2FA Soft violet */
     --accent-foreground: 240 5.9% 10%; /* Dark text on accent */
 
+    --tertiary: 330 90% 70%; /* Vibrant Pink */
+    --tertiary-foreground: 0 0% 100%;
+
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
 
     --ring: 256 92% 72%; /* Ring color same as primary */
-
-    --radius: 0.5rem;
 
     /* Sidebar specific colors, can be adjusted if needed or inherit from above */
     --sidebar-background: 0 0% 100%; /* White sidebar */
@@ -81,6 +82,9 @@ body {
 
     --accent: 250 60% 80%; /* Adjusted accent for dark mode */
     --accent-foreground: 0 0% 98%;
+
+    --tertiary: 330 85% 75%; /* Vibrant Pink for dark mode */
+    --tertiary-foreground: 330 85% 15%;
 
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 0 0% 98%;
