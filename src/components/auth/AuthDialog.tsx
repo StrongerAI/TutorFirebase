@@ -93,13 +93,6 @@ export function AuthDialog({ isOpen, onOpenChange, role: initialRole, defaultTab
     },
   });
 
-
-  const handleSuccessfulAuth = () => {
-    // The redirect logic is now handled by the useEffect on the landing page.
-    // This dialog's only responsibility is to close itself after successful auth.
-    onOpenChange(false);
-  }
-
   const handleEmailPasswordSignUp = async (
     values: z.infer<typeof authFormSchema>
   ) => {
@@ -112,7 +105,7 @@ export function AuthDialog({ isOpen, onOpenChange, role: initialRole, defaultTab
         await linkWithCredential(currentUser, credential);
         await sendEmailVerification(currentUser);
         toast({ title: 'Account Upgraded!', description: 'Your guest session has been saved. Please verify your email.' });
-        handleSuccessfulAuth();
+        onOpenChange(false);
       } else {
         if (!dialogRole) {
             toast({ title: 'Role not selected', description: 'Please select a role before signing up.', variant: 'destructive'});
@@ -127,7 +120,7 @@ export function AuthDialog({ isOpen, onOpenChange, role: initialRole, defaultTab
         await sendEmailVerification(userCredential.user);
         await setRoleForUser(userCredential.user.uid, dialogRole);
         toast({ title: 'Account Created!', description: 'A verification link has been sent to your email.' });
-        handleSuccessfulAuth();
+        onOpenChange(false);
       }
     } catch (error: any) {
       toast({
@@ -145,19 +138,25 @@ export function AuthDialog({ isOpen, onOpenChange, role: initialRole, defaultTab
   ) => {
     setIsSubmitting(true);
     try {
-      await signInWithEmailAndPassword(
-        auth,
-        values.email,
-        values.password
-      );
-      toast({ title: 'Signed In Successfully!', description: 'Welcome back! Redirecting...' });
-      handleSuccessfulAuth();
+      const userCredential = await signInWithEmailAndPassword(auth, values.email, values.password);
+      const userDocRef = doc(db, 'users', userCredential.user.uid);
+      const userDoc = await getDoc(userDocRef);
+
+      if (userDoc.exists()) {
+        const role = userDoc.data().role as UserRole;
+        toast({ title: 'Signed In Successfully!', description: 'Welcome back! Redirecting...' });
+        router.push(`/${role}/dashboard`);
+        onOpenChange(false);
+      } else {
+        await auth.signOut();
+        toast({ title: 'Sign In Failed', description: 'Your account profile is incomplete. Please sign up again.', variant: 'destructive' });
+      }
     } catch (error: any) {
-      toast({
-        title: 'Sign In Failed',
-        description: error.message,
-        variant: 'destructive',
-      });
+      if (error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password' || error.code === 'auth/invalid-credential') {
+          toast({ title: 'Sign In Failed', description: 'Invalid email or password.', variant: 'destructive'});
+      } else {
+          toast({ title: 'Sign In Failed', description: error.message, variant: 'destructive' });
+      }
     } finally {
         setIsSubmitting(false);
     }
@@ -166,35 +165,45 @@ export function AuthDialog({ isOpen, onOpenChange, role: initialRole, defaultTab
   const handleGoogleSignIn = async () => {
     setIsSubmitting(true);
     const provider = new GoogleAuthProvider();
-    const currentUser = auth.currentUser;
 
     try {
-        if (currentUser && currentUser.isAnonymous) {
-          await linkWithPopup(currentUser, provider);
-          toast({ title: 'Account Upgraded!', description: 'Your guest session has been saved.' });
-          handleSuccessfulAuth();
+        const result = await signInWithPopup(auth, provider);
+        const userDocRef = doc(db, 'users', result.user.uid);
+        const userDoc = await getDoc(userDocRef);
+
+        let role: UserRole = null;
+
+        if (userDoc.exists()) {
+            role = userDoc.data().role as UserRole;
         } else {
-          if (activeTab === 'signup' && !dialogRole) {
-            toast({ title: 'Role not selected', description: 'Please select a role to continue.', variant: 'destructive'});
-            setIsSubmitting(false);
-            return;
-          }
-          const result = await signInWithPopup(auth, provider);
-          const userDocRef = doc(db, 'users', result.user.uid);
-          const userDoc = await getDoc(userDocRef);
-          
-          if (!userDoc.exists()) {
-              // New user signing up
-              await setRoleForUser(result.user.uid, dialogRole!);
-          }
-          toast({ title: 'Signed In with Google!', description: 'Welcome! Redirecting...' });
-          handleSuccessfulAuth();
+            if (activeTab === 'signup' && dialogRole) {
+                await setRoleForUser(result.user.uid, dialogRole);
+                role = dialogRole;
+            } else {
+                await auth.signOut();
+                toast({
+                    title: 'Account Not Found',
+                    description: 'Please go to the "Sign Up" tab, select a role, and then sign up with Google.',
+                    variant: 'destructive',
+                    duration: 5000,
+                });
+                setIsSubmitting(false);
+                return;
+            }
+        }
+
+        if (role) {
+            toast({ title: 'Signed In with Google!', description: 'Welcome! Redirecting...' });
+            router.push(`/${role}/dashboard`);
+            onOpenChange(false);
+        } else {
+            toast({ title: 'Sign In Failed', description: 'Could not determine user role.', variant: 'destructive' });
         }
     } catch (error: any) {
         toast({ title: 'Google Sign-In Failed', description: error.message, variant: 'destructive'});
-    } finally {
         setIsSubmitting(false);
     }
+    // No finally block needed here as all paths handle isSubmitting
   }
 
   const handlePasswordReset = async (values: z.infer<typeof resetSchema>) => {
