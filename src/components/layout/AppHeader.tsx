@@ -1,16 +1,14 @@
-
 "use client";
 
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { APP_NAME, STUDENT_NAV_ITEMS, TEACHER_NAV_ITEMS } from "@/lib/constants";
+import { STUDENT_NAV_ITEMS, TEACHER_NAV_ITEMS } from "@/lib/constants";
 import { useUserRole } from "@/hooks/useUserRole";
 import { Menu, UserCircle, LogOut, ChevronDown } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import type { NavItem } from "@/types";
-import Image from "next/image";
 import { ThemeToggle } from "./ThemeToggle";
 import { useState } from "react";
 
@@ -94,8 +92,8 @@ export function AppHeader() {
           </SheetContent>
         </Sheet>
         <Link href="/" className="hidden md:flex items-center gap-2">
-            <div className="w-7 h-7 rounded-md flex items-center justify-center bg-card border">
-                <span className="font-headline font-bold text-base bg-gradient-to-br from-blue-700 via-purple-700 to-pink-700 text-transparent bg-clip-text [text-shadow:0_0_6px_hsl(var(--primary)/0.5)]">
+            <div className="w-8 h-8 rounded-md flex items-center justify-center bg-card border">
+                <span className="font-headline font-bold text-lg bg-gradient-to-br from-blue-700 via-purple-700 to-pink-700 text-transparent bg-clip-text [text-shadow:0_0_8px_hsl(var(--primary)/0.5)]">
                     TT
                 </span>
             </div>
