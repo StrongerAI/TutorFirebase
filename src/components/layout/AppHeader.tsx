@@ -20,7 +20,7 @@ export function AppHeader() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const navItems: NavItem[] = role === 'student' ? STUDENT_NAV_ITEMS : TEACHER_NAV_ITEMS;
-  const homePath = '/';
+  const homePath = '/'; // Corrected: Always point to the landing page.
 
   const NavLink = ({ item }: { item: NavItem }) => {
     const isActive = item.href && pathname.startsWith(item.href);
@@ -171,5 +171,4 @@ export function AppHeader() {
     </header>
   );
 }
-
     
