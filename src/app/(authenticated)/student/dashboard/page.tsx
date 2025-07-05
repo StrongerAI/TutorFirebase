@@ -1,7 +1,7 @@
-
 // src/app/(authenticated)/student/dashboard/page.tsx
 "use client";
 
+import { useState, useEffect } from "react";
 import { DashboardMetricCard } from "@/components/shared/DashboardMetricCard";
 import { FeaturePage } from "@/components/shared/FeaturePage";
 import { useUserRole } from "@/hooks/useUserRole";
@@ -44,16 +44,33 @@ const pieChartData = [
     { name: 'Pending', value: 10, fill: 'hsl(var(--muted))' },
 ];
 
+const welcomeMessages = [
+  "Let's make today a productive learning day.",
+  "Ready to tackle your goals?",
+  "Your learning journey continues. What's next?",
+  "Seize the day and unlock your potential.",
+  "Every session is a step towards success. Let's get started!",
+];
+
 
 export default function StudentDashboardPage() {
   const { user } = useUserRole();
+  const [welcomeMessage, setWelcomeMessage] = useState("");
   const userName = user?.displayName?.split(' ')[0] || user?.email?.split('@')[0] || "Student";
+
+  useEffect(() => {
+    const randomIndex = Math.floor(Math.random() * welcomeMessages.length);
+    setWelcomeMessage(welcomeMessages[randomIndex]);
+  }, []);
+
+  const fullWelcomeMessage = `Welcome back, ${userName}! ${welcomeMessage}`;
+
 
   return (
     <FeaturePage 
       title="Student Dashboard" 
       icon={LayoutDashboard} 
-      description={`Welcome back, ${userName}! Your personalized learning overview.`}
+      description={welcomeMessage ? fullWelcomeMessage : `Welcome back, ${userName}!`}
     >
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
         <DashboardMetricCard

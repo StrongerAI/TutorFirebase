@@ -1,7 +1,7 @@
-
 // src/app/(authenticated)/teacher/dashboard/page.tsx
 "use client";
 
+import { useState, useEffect } from "react";
 import { DashboardMetricCard } from "@/components/shared/DashboardMetricCard";
 import { FeaturePage } from "@/components/shared/FeaturePage";
 import { useUserRole } from "@/hooks/useUserRole";
@@ -43,15 +43,31 @@ const gradingStatusData = [
     { name: 'Overdue', value: 5, fill: 'hsl(var(--destructive))' },
 ];
 
+const welcomeMessages = [
+    "Ready to inspire some minds today?",
+    "Let's empower the next generation.",
+    "Your dedication is shaping the future. What's the plan for today?",
+    "Another day to make a difference. Let's get started.",
+    "Let's streamline your teaching and focus on what matters most.",
+];
+
 export default function TeacherDashboardPage() {
   const { user } = useUserRole();
+  const [welcomeMessage, setWelcomeMessage] = useState("");
   const userName = user?.displayName?.split(' ')[0] || user?.email?.split('@')[0] || "Teacher";
+
+  useEffect(() => {
+    const randomIndex = Math.floor(Math.random() * welcomeMessages.length);
+    setWelcomeMessage(welcomeMessages[randomIndex]);
+  }, []);
+
+  const fullWelcomeMessage = `Welcome back, ${userName}! ${welcomeMessage}`;
 
   return (
     <FeaturePage 
       title="Teacher Dashboard" 
       icon={LayoutDashboard} 
-      description={`Welcome back, ${userName}! Insights to enhance your teaching effectiveness.`}
+      description={welcomeMessage ? fullWelcomeMessage : `Welcome back, ${userName}!`}
     >
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
         <DashboardMetricCard
