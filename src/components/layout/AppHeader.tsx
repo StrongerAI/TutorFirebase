@@ -1,3 +1,4 @@
+
 "use client";
 
 import { Button } from "@/components/ui/button";
@@ -56,7 +57,7 @@ export function AppHeader() {
                <SheetTitle className="sr-only">Main Navigation</SheetTitle>
                <SheetDescription className="sr-only">App main navigation links</SheetDescription>
               <Link href="/" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center gap-3 text-lg font-semibold">
-                  <div className="w-8 h-8 rounded-md flex items-center justify-center bg-gradient-to-br from-blue-500 via-purple-500 to-pink-500 shadow-md">
+                  <div className="w-8 h-8 rounded-md flex items-center justify-center bg-gradient-to-br from-blue-400 via-purple-400 to-pink-400 shadow-md">
                       <span className="font-headline font-bold text-lg text-primary-foreground">
                           TT
                       </span>
@@ -92,7 +93,7 @@ export function AppHeader() {
           </SheetContent>
         </Sheet>
         <Link href="/" className="hidden md:flex items-center gap-2">
-            <div className="w-8 h-8 rounded-md flex items-center justify-center bg-gradient-to-br from-blue-500 via-purple-500 to-pink-500 shadow-md">
+            <div className="w-8 h-8 rounded-md flex items-center justify-center bg-gradient-to-br from-blue-400 via-purple-400 to-pink-400 shadow-md">
                 <span className="font-headline font-bold text-lg text-primary-foreground">
                     TT
                 </span>
