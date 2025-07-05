@@ -7,7 +7,7 @@ import { GraduationCap, Briefcase, Sparkles, Users, BarChart, Menu, Loader2, Log
 import Image from "next/image";
 import Link from "next/link";
 import { APP_NAME } from "@/lib/constants";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import type { UserRole } from "@/types";
 import { AuthDialog } from "./AuthDialog";
 import { useUserRole } from "@/hooks/useUserRole";
@@ -26,6 +26,14 @@ export function LoginButtons() {
   const { user, role, isLoading, setGuestRole, logout } = useUserRole();
   const router = useRouter();
 
+  useEffect(() => {
+    // If we're done loading, there's a user and a role, and we are on the landing page,
+    // redirect to the dashboard.
+    if (!isLoading && user && role && window.location.pathname === '/') {
+      router.push(`/${role}/dashboard`);
+    }
+  }, [isLoading, user, role, router]);
+
 
   const handleAuthDialogOpen = (role: UserRole, tab: 'signin' | 'signup' = 'signup') => {
     setSelectedRole(role);
@@ -42,7 +50,7 @@ export function LoginButtons() {
       if (success) {
         router.push(`/${role}/dashboard`);
       }
-      setIsGuestLoading(false);
+      // setIsLoading is handled inside setGuestRole now.
     }
   };
 
@@ -236,13 +244,7 @@ export function LoginButtons() {
       <AuthDialog
         key={authDialogKey}
         isOpen={isAuthDialogOpen}
-        onOpenChange={(isOpen) => {
-            setIsAuthDialogOpen(isOpen);
-            // After a login/signup, redirect if successful
-            if (!isOpen && user && role) {
-                router.push(`/${role}/dashboard`);
-            }
-        }}
+        onOpenChange={setIsAuthDialogOpen}
         role={selectedRole}
         defaultTab={defaultTab}
       />

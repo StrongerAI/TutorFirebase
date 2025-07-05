@@ -39,8 +39,7 @@ export const UserRoleProvider = ({ children }: { children: ReactNode }) => {
           const userData = userDoc.data();
           setRole(userData.role as UserRole);
         } else {
-          // This case might happen during the small gap between user creation and doc creation
-          // We don't set role to null immediately, we wait for the doc to be created.
+          setRole(null);
         }
       } else {
         setUser(null);
@@ -76,9 +75,11 @@ export const UserRoleProvider = ({ children }: { children: ReactNode }) => {
       const userCredential = await signInAnonymously(auth);
       // After anonymous sign-in, the onAuthStateChanged listener will fire.
       // We then immediately set the role for this new user.
-      await setDoc(doc(db, "users", userCredential.user.uid), { role: newRole });
-      // The listener will pick up the user, and then the role, triggering the redirect effect on the login page.
-      // No need to set state here as the listener handles it.
+      await setRoleForUser(userCredential.user.uid, newRole);
+      // The listener will pick up the user, and then the role, triggering the redirect effect.
+      // Eagerly set user and role here to speed up redirect.
+      setUser(userCredential.user);
+      setRole(newRole);
       return true;
     } catch (error) {
       console.error("Failed to create anonymous user:", error);
@@ -87,10 +88,11 @@ export const UserRoleProvider = ({ children }: { children: ReactNode }) => {
         description: "Could not start a guest session. Please try again.",
         variant: "destructive",
       });
-      setIsLoading(false);
       return false;
+    } finally {
+        setIsLoading(false);
     }
-  }, [user, toast]);
+  }, [user, toast, setRoleForUser]);
 
   const logout = async () => {
     try {
