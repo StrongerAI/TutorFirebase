@@ -20,6 +20,8 @@ import {
   linkWithCredential,
   EmailAuthProvider,
   linkWithPopup,
+  sendPasswordResetEmail,
+  sendEmailVerification,
 } from 'firebase/auth';
 import { auth, db } from '@/lib/firebase/config';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
@@ -55,15 +57,23 @@ const authFormSchema = z.object({
     .min(6, { message: 'Password must be at least 6 characters long.' }),
 });
 
+const resetSchema = z.object({
+  email: z.string().email({ message: 'Please enter a valid email.' }),
+});
+
 export function AuthDialog({ isOpen, onOpenChange, role: initialRole, defaultTab }: AuthDialogProps) {
   const { toast } = useToast();
   const { setRoleForUser } = useUserRole();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [dialogRole, setDialogRole] = useState<UserRole>(initialRole);
+  const [view, setView] = useState<'auth' | 'reset'>('auth');
   const router = useRouter();
 
   useEffect(() => {
     setDialogRole(initialRole);
+    if(isOpen) {
+        setView('auth'); // Reset to auth view when dialog opens
+    }
   }, [initialRole, isOpen]);
 
   const form = useForm<z.infer<typeof authFormSchema>>({
@@ -73,6 +83,14 @@ export function AuthDialog({ isOpen, onOpenChange, role: initialRole, defaultTab
       password: '',
     },
   });
+
+  const resetForm = useForm<z.infer<typeof resetSchema>>({
+    resolver: zodResolver(resetSchema),
+    defaultValues: {
+      email: '',
+    },
+  });
+
 
   const handleSuccessfulAuth = (roleToRedirect: UserRole) => {
     if (roleToRedirect) {
@@ -91,9 +109,10 @@ export function AuthDialog({ isOpen, onOpenChange, role: initialRole, defaultTab
       if (currentUser && currentUser.isAnonymous) {
         const credential = EmailAuthProvider.credential(values.email, values.password);
         await linkWithCredential(currentUser, credential);
+        await sendEmailVerification(currentUser);
         const userDoc = await getDoc(doc(db, 'users', currentUser.uid));
         const existingRole = userDoc.exists() ? userDoc.data().role : 'student'; // Fallback role
-        toast({ title: 'Account Upgraded!', description: 'Your guest session has been saved.' });
+        toast({ title: 'Account Upgraded!', description: 'Your guest session has been saved. Please verify your email.' });
         handleSuccessfulAuth(existingRole);
       } else {
         if (!dialogRole) {
@@ -106,8 +125,9 @@ export function AuthDialog({ isOpen, onOpenChange, role: initialRole, defaultTab
           values.email,
           values.password
         );
+        await sendEmailVerification(userCredential.user);
         await setRoleForUser(userCredential.user.uid, dialogRole);
-        toast({ title: 'Account Created!', description: 'Welcome! Redirecting...' });
+        toast({ title: 'Account Created!', description: 'A verification link has been sent to your email.' });
         handleSuccessfulAuth(dialogRole);
       }
     } catch (error: any) {
@@ -184,6 +204,26 @@ export function AuthDialog({ isOpen, onOpenChange, role: initialRole, defaultTab
     }
   }
 
+  const handlePasswordReset = async (values: z.infer<typeof resetSchema>) => {
+    setIsSubmitting(true);
+    try {
+      await sendPasswordResetEmail(auth, values.email);
+      toast({
+        title: 'Password Reset Email Sent',
+        description: 'Please check your inbox for instructions to reset your password.',
+      });
+      setView('auth');
+    } catch (error: any) {
+      toast({
+        title: 'Error',
+        description: error.message,
+        variant: 'destructive',
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   const AuthForm = ({ isSignUp }: { isSignUp: boolean }) => (
     <Form {...form}>
       <form
@@ -229,85 +269,124 @@ export function AuthDialog({ isOpen, onOpenChange, role: initialRole, defaultTab
     <Dialog open={isOpen} onOpenChange={(open) => {
         if(!open) {
             form.reset();
+            resetForm.reset();
         }
         onOpenChange(open);
     }}>
       <DialogContent className="sm:max-w-[425px]">
-        <DialogHeader>
-          <DialogTitle>Welcome{dialogRole ? ` as a ${dialogRole}` : ''}</DialogTitle>
-          <DialogDescription>
-            {initialRole ? `Sign up or sign in as a ${initialRole}.` : 'Please select your role to continue.'}
-          </DialogDescription>
-        </DialogHeader>
+        {view === 'auth' ? (
+        <>
+            <DialogHeader>
+            <DialogTitle>Welcome{dialogRole ? ` as a ${dialogRole}` : ''}</DialogTitle>
+            <DialogDescription>
+                {initialRole ? `Sign up or sign in as a ${initialRole}.` : 'Please select your role to continue.'}
+            </DialogDescription>
+            </DialogHeader>
 
-        {!initialRole && (
-          <RadioGroup
-            value={dialogRole || ''}
-            onValueChange={(value) => setDialogRole(value as UserRole)}
-            className="flex space-x-4 pt-2 pb-4"
-          >
-            <div className="flex items-center space-x-2">
-              <RadioGroupItem value="student" id="role-student-dialog" />
-              <Label htmlFor="role-student-dialog" className="font-normal cursor-pointer">
-                I'm a Student
-              </Label>
+            {!initialRole && (
+            <RadioGroup
+                value={dialogRole || ''}
+                onValueChange={(value) => setDialogRole(value as UserRole)}
+                className="flex space-x-4 pt-2 pb-4"
+            >
+                <div className="flex items-center space-x-2">
+                <RadioGroupItem value="student" id="role-student-dialog" />
+                <Label htmlFor="role-student-dialog" className="font-normal cursor-pointer">
+                    I'm a Student
+                </Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                <RadioGroupItem value="teacher" id="role-teacher-dialog" />
+                <Label htmlFor="role-teacher-dialog" className="font-normal cursor-pointer">
+                    I'm a Teacher
+                </Label>
+                </div>
+            </RadioGroup>
+            )}
+
+            <Tabs defaultValue={defaultTab || 'signin'} className="w-full">
+                <TabsList className="grid w-full grid-cols-2">
+                    <TabsTrigger value="signin">Sign In</TabsTrigger>
+                    <TabsTrigger value="signup">Sign Up</TabsTrigger>
+                </TabsList>
+                <TabsContent value="signin">
+                    <div className="py-4 space-y-4">
+                        <AuthForm isSignUp={false} />
+                         <Button variant="link" className="p-0 h-auto font-normal text-sm" onClick={() => setView('reset')}>
+                            Forgot Password?
+                        </Button>
+                        <div className="relative">
+                            <div className="absolute inset-0 flex items-center">
+                                <span className="w-full border-t" />
+                            </div>
+                            <div className="relative flex justify-center text-xs uppercase">
+                                <span className="bg-background px-2 text-muted-foreground">
+                                Or continue with
+                                </span>
+                            </div>
+                        </div>
+                        <Button variant="outline" className="w-full" onClick={handleGoogleSignIn} disabled={isSubmitting}>
+                        <svg role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" className="mr-2 h-4 w-4"><title>Google</title><path d="M12.48 10.92v3.28h7.84c-.24 1.84-.85 3.18-1.73 4.1-1.02 1.02-2.62 1.62-4.55 1.62-3.87 0-7-3.13-7-7s3.13-7 7-7c2.18 0 3.66.86 4.6 1.78l2.74-2.74C18.77 1.69 16.2.5 12.48.5 5.8 0 0 5.8 0 12.5s5.8 12.5 12.48 12.5c7.22 0 12-5.04 12-12.24 0-.76-.07-1.5-.2-2.24H12.48z"/></svg>
+                            Sign in with Google
+                        </Button>
+                    </div>
+                </TabsContent>
+                <TabsContent value="signup">
+                    <div className="py-4 space-y-4">
+                        <AuthForm isSignUp={true} />
+                        <div className="relative">
+                            <div className="absolute inset-0 flex items-center">
+                                <span className="w-full border-t" />
+                            </div>
+                            <div className="relative flex justify-center text-xs uppercase">
+                                <span className="bg-background px-2 text-muted-foreground">
+                                Or sign up with
+                                </span>
+                            </div>
+                        </div>
+                        <Button variant="outline" className="w-full" onClick={handleGoogleSignIn} disabled={isSubmitting}>
+                        <svg role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" className="mr-2 h-4 w-4"><title>Google</title><path d="M12.48 10.92v3.28h7.84c-.24 1.84-.85 3.18-1.73 4.1-1.02 1.02-2.62 1.62-4.55 1.62-3.87 0-7-3.13-7-7s3.13-7 7-7c2.18 0 3.66.86 4.6 1.78l2.74-2.74C18.77 1.69 16.2.5 12.48.5 5.8 0 0 5.8 0 12.5s5.8 12.5 12.48 12.5c7.22 0 12-5.04 12-12.24 0-.76-.07-1.5-.2-2.24H12.48z"/></svg>
+                            Sign up with Google
+                        </Button>
+                    </div>
+                </TabsContent>
+            </Tabs>
+        </>
+        ) : (
+            <div className="space-y-4">
+                <DialogHeader className="text-left">
+                    <DialogTitle>Reset Password</DialogTitle>
+                    <DialogDescription>
+                        Enter your email address to receive a password reset link.
+                    </DialogDescription>
+                </DialogHeader>
+                <Form {...resetForm}>
+                    <form onSubmit={resetForm.handleSubmit(handlePasswordReset)} className="space-y-4 pt-4">
+                        <FormField
+                            control={resetForm.control}
+                            name="email"
+                            render={({ field }) => (
+                                <FormItem>
+                                <FormLabel>Email</FormLabel>
+                                <FormControl>
+                                    <Input placeholder="you@example.com" {...field} />
+                                </FormControl>
+                                <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                        <Button type="submit" className="w-full" disabled={isSubmitting}>
+                            {isSubmitting ? 'Sending Link...' : 'Send Reset Link'}
+                        </Button>
+                    </form>
+                </Form>
+                <Button variant="link" className="p-0 h-auto font-normal text-sm" onClick={() => setView('auth')}>
+                    &larr; Back to Sign In
+                </Button>
             </div>
-            <div className="flex items-center space-x-2">
-              <RadioGroupItem value="teacher" id="role-teacher-dialog" />
-               <Label htmlFor="role-teacher-dialog" className="font-normal cursor-pointer">
-                I'm a Teacher
-              </Label>
-            </div>
-          </RadioGroup>
         )}
 
-        <Tabs defaultValue={defaultTab || 'signin'} className="w-full">
-            <TabsList className="grid w-full grid-cols-2">
-                <TabsTrigger value="signin">Sign In</TabsTrigger>
-                <TabsTrigger value="signup">Sign Up</TabsTrigger>
-            </TabsList>
-            <TabsContent value="signin">
-                <div className="py-4 space-y-4">
-                    <AuthForm isSignUp={false} />
-                    <div className="relative">
-                        <div className="absolute inset-0 flex items-center">
-                            <span className="w-full border-t" />
-                        </div>
-                        <div className="relative flex justify-center text-xs uppercase">
-                            <span className="bg-background px-2 text-muted-foreground">
-                            Or continue with
-                            </span>
-                        </div>
-                    </div>
-                    <Button variant="outline" className="w-full" onClick={handleGoogleSignIn} disabled={isSubmitting}>
-                       <svg role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" className="mr-2 h-4 w-4"><title>Google</title><path d="M12.48 10.92v3.28h7.84c-.24 1.84-.85 3.18-1.73 4.1-1.02 1.02-2.62 1.62-4.55 1.62-3.87 0-7-3.13-7-7s3.13-7 7-7c2.18 0 3.66.86 4.6 1.78l2.74-2.74C18.77 1.69 16.2.5 12.48.5 5.8 0 0 5.8 0 12.5s5.8 12.5 12.48 12.5c7.22 0 12-5.04 12-12.24 0-.76-.07-1.5-.2-2.24H12.48z"/></svg>
-                        Sign in with Google
-                    </Button>
-                </div>
-            </TabsContent>
-            <TabsContent value="signup">
-                <div className="py-4 space-y-4">
-                    <AuthForm isSignUp={true} />
-                     <div className="relative">
-                        <div className="absolute inset-0 flex items-center">
-                            <span className="w-full border-t" />
-                        </div>
-                        <div className="relative flex justify-center text-xs uppercase">
-                            <span className="bg-background px-2 text-muted-foreground">
-                            Or sign up with
-                            </span>
-                        </div>
-                    </div>
-                     <Button variant="outline" className="w-full" onClick={handleGoogleSignIn} disabled={isSubmitting}>
-                       <svg role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" className="mr-2 h-4 w-4"><title>Google</title><path d="M12.48 10.92v3.28h7.84c-.24 1.84-.85 3.18-1.73 4.1-1.02 1.02-2.62 1.62-4.55 1.62-3.87 0-7-3.13-7-7s3.13-7 7-7c2.18 0 3.66.86 4.6 1.78l2.74-2.74C18.77 1.69 16.2.5 12.48.5 5.8 0 0 5.8 0 12.5s5.8 12.5 12.48 12.5c7.22 0 12-5.04 12-12.24 0-.76-.07-1.5-.2-2.24H12.48z"/></svg>
-                        Sign up with Google
-                    </Button>
-                </div>
-            </TabsContent>
-        </Tabs>
       </DialogContent>
     </Dialog>
   );
 }
-
-    
