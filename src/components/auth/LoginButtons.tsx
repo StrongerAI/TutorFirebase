@@ -24,7 +24,7 @@ export function LoginButtons() {
   const [isGuestLoading, setIsGuestLoading] = useState(false);
   const [isInitialLoad, setIsInitialLoad] = useState(true);
 
-  const { user, role, isLoading: isAuthLoading, logout } = useUserRole();
+  const { user, role, isLoading: isAuthLoading, logout, setGuestRole } = useUserRole();
   const router = useRouter();
   
   // This effect handles the initial loading screen.
@@ -43,14 +43,13 @@ export function LoginButtons() {
     setIsMobileMenuOpen(false); // Close mobile menu if open
   };
 
-  const { setGuestRole } = useUserRole();
   const handleGuestPreview = async (roleToPreview: UserRole) => {
     setIsGuestLoading(true);
     const success = await setGuestRole(roleToPreview);
     if (success) {
-      router.push(`/${roleToPreview}/dashboard`);
+      // The redirect will be handled by the context/listener to ensure a smooth transition
     } else {
-        setIsGuestLoading(false); // Only stop loading if it fails, otherwise page unmounts
+        setIsGuestLoading(false);
     }
   };
 
@@ -58,7 +57,7 @@ export function LoginButtons() {
 
   // While checking auth status or if a logged-in user is about to be redirected,
   // show a full-page loading indicator. This prevents the "flash of content".
-  if (isInitialLoad) {
+  if (isInitialLoad || (user && !user.isAnonymous && window.location.pathname === '/')) {
     return (
       <div className="flex items-center justify-center h-screen bg-background">
         <Loader2 className="h-12 w-12 animate-spin text-primary" />
@@ -136,10 +135,10 @@ export function LoginButtons() {
         <nav className="p-4 border-b border-border/70 sticky top-0 bg-card z-10">
           <div className="container mx-auto flex justify-between items-center">
             <Link href={homePath} className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded-md flex items-center justify-center bg-card border">
-                <span className="font-headline font-bold text-lg bg-gradient-to-br from-blue-700 via-purple-700 to-pink-700 text-transparent bg-clip-text [text-shadow:0_0_8px_hsl(var(--primary)/0.5)]">
-                  TT
-                </span>
+              <div className="w-8 h-8 rounded-md flex items-center justify-center bg-gradient-to-br from-blue-700 via-purple-700 to-pink-700 shadow-md">
+                  <span className="font-headline font-bold text-lg text-primary-foreground">
+                      TT
+                  </span>
               </div>
             </Link>
             
@@ -186,9 +185,8 @@ export function LoginButtons() {
               </p>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                 <Button
-                  variant="default"
                   size="lg"
-                  className="w-full py-6 text-base md:text-lg rounded-lg transform transition-all hover:scale-105 hover:shadow-xl focus:ring-4 focus:ring-primary/50"
+                  className="w-full py-6 text-base md:text-lg rounded-lg transform transition-all hover:scale-105 focus:ring-4 focus:ring-primary/50 bg-gradient-to-br from-blue-700 via-purple-700 to-pink-700 text-primary-foreground shadow-md hover:shadow-lg hover:opacity-95"
                   onClick={() => handleGuestPreview('student')}
                   disabled={isGuestLoading}
                 >
@@ -196,9 +194,8 @@ export function LoginButtons() {
                   Preview as a Student
                 </Button>
                 <Button
-                  variant="outline"
                   size="lg"
-                  className="w-full py-6 text-base md:text-lg rounded-lg border-2 border-primary text-primary hover:bg-primary/10 transform transition-all hover:scale-105 hover:shadow-xl focus:ring-4 focus:ring-primary/50"
+                  className="w-full py-6 text-base md:text-lg rounded-lg transform transition-all hover:scale-105 focus:ring-4 focus:ring-primary/50 bg-gradient-to-br from-blue-700 via-purple-700 to-pink-700 text-primary-foreground shadow-md hover:shadow-lg hover:opacity-95"
                   onClick={() => handleGuestPreview('teacher')}
                   disabled={isGuestLoading}
                 >
