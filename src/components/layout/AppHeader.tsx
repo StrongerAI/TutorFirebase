@@ -20,7 +20,6 @@ export function AppHeader() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const navItems: NavItem[] = role === 'student' ? STUDENT_NAV_ITEMS : TEACHER_NAV_ITEMS;
-  const homePath = '/'; // Corrected: Always point to the landing page.
 
   const NavLink = ({ item }: { item: NavItem }) => {
     const isActive = item.href && pathname.startsWith(item.href);
@@ -58,7 +57,7 @@ export function AppHeader() {
             <SheetHeader className="p-4 border-b">
                <SheetTitle className="sr-only">Main Navigation</SheetTitle>
                <SheetDescription className="sr-only">App main navigation links</SheetDescription>
-              <Link href={homePath} onClick={() => setIsMobileMenuOpen(false)} className="flex items-center gap-3 text-lg font-semibold">
+              <Link href="/" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center gap-3 text-lg font-semibold">
                   <Image src="https://placehold.co/32x32/9775FA/FFFFFF.png?text=TT" alt={`${APP_NAME} Logo`} width={32} height={32} className="rounded-md" data-ai-hint="logo education" />
               </Link>
             </SheetHeader>
@@ -90,7 +89,7 @@ export function AppHeader() {
             </div>
           </SheetContent>
         </Sheet>
-        <Link href={homePath} className="hidden md:flex items-center gap-2">
+        <Link href="/" className="hidden md:flex items-center gap-2">
             <Image src="https://placehold.co/32x32/9775FA/FFFFFF.png?text=TT" alt={`${APP_NAME} Logo`} width={28} height={28} className="rounded-md" data-ai-hint="logo education" />
         </Link>
       </div>

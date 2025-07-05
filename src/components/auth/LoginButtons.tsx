@@ -7,7 +7,7 @@ import { GraduationCap, Briefcase, Sparkles, Users, BarChart, Menu, Loader2, Log
 import Image from "next/image";
 import Link from "next/link";
 import { APP_NAME } from "@/lib/constants";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import type { UserRole } from "@/types";
 import { AuthDialog } from "./AuthDialog";
 import { useUserRole } from "@/hooks/useUserRole";
@@ -26,13 +26,6 @@ export function LoginButtons() {
   const { user, role, isLoading, setGuestRole, logout } = useUserRole();
   const router = useRouter();
 
-  // Redirect any logged-in user to their dashboard immediately.
-  useEffect(() => {
-    if (!isLoading && user && role) {
-      router.push(`/${role}/dashboard`);
-    }
-  }, [isLoading, user, role, router]);
-
 
   const handleAuthDialogOpen = (role: UserRole, tab: 'signin' | 'signup' = 'signup') => {
     setSelectedRole(role);
@@ -45,16 +38,18 @@ export function LoginButtons() {
   const handleGuestPreview = async (role: UserRole) => {
     if (role) {
       setIsGuestLoading(true);
-      await setGuestRole(role);
-      // The useEffect above will handle the redirect once the user and role are set.
+      const success = await setGuestRole(role);
+      if (success) {
+        router.push(`/${role}/dashboard`);
+      }
+      setIsGuestLoading(false);
     }
   };
 
   const homePath = "/";
 
-  // Show a loading screen while checking auth or redirecting.
-  // This prevents the page from flashing before the redirect.
-  if (isLoading || (user && role)) {
+  // Show a loading screen while checking auth.
+  if (isLoading) {
      return (
       <div className="flex items-center justify-center h-screen bg-background">
         <Loader2 className="h-12 w-12 animate-spin text-primary" />
