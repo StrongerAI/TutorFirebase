@@ -20,7 +20,7 @@ export function FeaturePage({ title, description, icon: Icon, children, classNam
           {Icon && <Icon className="h-8 w-8 text-primary" />}
           <div>
             <h1 className="text-2xl md:text-3xl font-bold font-headline tracking-tight">{title}</h1>
-            {description && <p className="text-muted-foreground">{description}</p>}
+            {description && <p className="text-lg text-foreground/80">{description}</p>}
           </div>
         </div>
         {actionButtons && <div className="flex gap-2">{actionButtons}</div>}
