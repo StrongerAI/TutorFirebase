@@ -46,18 +46,17 @@ export function LoginButtons() {
   const handleGuestPreview = async (roleToPreview: UserRole) => {
     setIsGuestLoading(true);
     const success = await setGuestRole(roleToPreview);
-    if (success) {
-      // The redirect will be handled by the context/listener to ensure a smooth transition
-    } else {
-        setIsGuestLoading(false);
+    if (!success) {
+      setIsGuestLoading(false);
     }
+    // Redirect will be handled by the context/listener to ensure a smooth transition
   };
 
   const homePath = "/";
 
   // While checking auth status or if a logged-in user is about to be redirected,
   // show a full-page loading indicator. This prevents the "flash of content".
-  if (isInitialLoad || (user && !user.isAnonymous && window.location.pathname === '/')) {
+  if (isInitialLoad) {
     return (
       <div className="flex items-center justify-center h-screen bg-background">
         <Loader2 className="h-12 w-12 animate-spin text-primary" />
@@ -135,7 +134,7 @@ export function LoginButtons() {
         <nav className="p-4 border-b border-border/70 sticky top-0 bg-card z-10">
           <div className="container mx-auto flex justify-between items-center">
             <Link href={homePath} className="flex items-center gap-2">
-                <div className="w-8 h-8 rounded-md flex items-center justify-center bg-card border">
+                <div className="w-8 h-8 rounded-md flex items-center justify-center bg-card">
                     <span className="font-headline font-bold text-lg bg-gradient-to-br from-blue-400 via-purple-400 to-pink-400 text-transparent bg-clip-text">
                         TT
                     </span>
