@@ -67,14 +67,16 @@ export function AuthDialog({ isOpen, onOpenChange, role: initialRole, defaultTab
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [dialogRole, setDialogRole] = useState<UserRole>(initialRole);
   const [view, setView] = useState<'auth' | 'reset'>('auth');
+  const [activeTab, setActiveTab] = useState(defaultTab || 'signin');
   const router = useRouter();
 
   useEffect(() => {
     setDialogRole(initialRole);
     if(isOpen) {
         setView('auth'); // Reset to auth view when dialog opens
+        setActiveTab(defaultTab || 'signin');
     }
-  }, [initialRole, isOpen]);
+  }, [initialRole, isOpen, defaultTab]);
 
   const form = useForm<z.infer<typeof authFormSchema>>({
     resolver: zodResolver(authFormSchema),
@@ -179,7 +181,7 @@ export function AuthDialog({ isOpen, onOpenChange, role: initialRole, defaultTab
           toast({ title: 'Account Upgraded!', description: 'Your guest session has been saved.' });
           handleSuccessfulAuth(existingRole);
         } else {
-          if (!dialogRole) {
+          if (activeTab === 'signup' && !dialogRole) {
             toast({ title: 'Role not selected', description: 'Please select a role to continue.', variant: 'destructive'});
             setIsSubmitting(false);
             return;
@@ -188,11 +190,14 @@ export function AuthDialog({ isOpen, onOpenChange, role: initialRole, defaultTab
           const userDocRef = doc(db, 'users', result.user.uid);
           const userDoc = await getDoc(userDocRef);
           
-          let userRole = dialogRole;
-          if (!userDoc.exists()) {
-              await setRoleForUser(result.user.uid, dialogRole);
-          } else {
+          let userRole: UserRole = null;
+          if (userDoc.exists()) {
+              // Existing user signing in
               userRole = userDoc.data().role;
+          } else {
+              // New user signing up
+              await setRoleForUser(result.user.uid, dialogRole!);
+              userRole = dialogRole;
           }
           toast({ title: 'Signed In with Google!', description: 'Welcome! Redirecting...' });
           handleSuccessfulAuth(userRole);
@@ -277,34 +282,17 @@ export function AuthDialog({ isOpen, onOpenChange, role: initialRole, defaultTab
         {view === 'auth' ? (
         <>
             <DialogHeader>
-            <DialogTitle>Welcome{dialogRole ? ` as a ${dialogRole}` : ''}</DialogTitle>
-            <DialogDescription>
-                {initialRole ? `Sign up or sign in as a ${initialRole}.` : 'Please select your role to continue.'}
-            </DialogDescription>
+                <DialogTitle>
+                {activeTab === 'signin' ? 'Welcome Back' : 'Create an Account'}
+                </DialogTitle>
+                <DialogDescription>
+                {activeTab === 'signin'
+                    ? 'Sign in to access your dashboard.'
+                    : 'Select your role and create an account to get started.'}
+                </DialogDescription>
             </DialogHeader>
 
-            {!initialRole && (
-            <RadioGroup
-                value={dialogRole || ''}
-                onValueChange={(value) => setDialogRole(value as UserRole)}
-                className="flex space-x-4 pt-2 pb-4"
-            >
-                <div className="flex items-center space-x-2">
-                <RadioGroupItem value="student" id="role-student-dialog" />
-                <Label htmlFor="role-student-dialog" className="font-normal cursor-pointer">
-                    I'm a Student
-                </Label>
-                </div>
-                <div className="flex items-center space-x-2">
-                <RadioGroupItem value="teacher" id="role-teacher-dialog" />
-                <Label htmlFor="role-teacher-dialog" className="font-normal cursor-pointer">
-                    I'm a Teacher
-                </Label>
-                </div>
-            </RadioGroup>
-            )}
-
-            <Tabs defaultValue={defaultTab || 'signin'} className="w-full">
+            <Tabs defaultValue={defaultTab || 'signin'} onValueChange={(tab) => setActiveTab(tab as 'signin' | 'signup')} className="w-full">
                 <TabsList className="grid w-full grid-cols-2">
                     <TabsTrigger value="signin">Sign In</TabsTrigger>
                     <TabsTrigger value="signup">Sign Up</TabsTrigger>
@@ -333,6 +321,26 @@ export function AuthDialog({ isOpen, onOpenChange, role: initialRole, defaultTab
                 </TabsContent>
                 <TabsContent value="signup">
                     <div className="py-4 space-y-4">
+                        {!initialRole && (
+                            <RadioGroup
+                                value={dialogRole || ''}
+                                onValueChange={(value) => setDialogRole(value as UserRole)}
+                                className="flex space-x-4"
+                            >
+                                <div className="flex items-center space-x-2">
+                                <RadioGroupItem value="student" id="role-student-dialog" />
+                                <Label htmlFor="role-student-dialog" className="font-normal cursor-pointer">
+                                    I'm a Student
+                                </Label>
+                                </div>
+                                <div className="flex items-center space-x-2">
+                                <RadioGroupItem value="teacher" id="role-teacher-dialog" />
+                                <Label htmlFor="role-teacher-dialog" className="font-normal cursor-pointer">
+                                    I'm a Teacher
+                                </Label>
+                                </div>
+                            </RadioGroup>
+                        )}
                         <AuthForm isSignUp={true} />
                         <div className="relative">
                             <div className="absolute inset-0 flex items-center">
@@ -390,3 +398,5 @@ export function AuthDialog({ isOpen, onOpenChange, role: initialRole, defaultTab
     </Dialog>
   );
 }
+
+    
