@@ -135,11 +135,11 @@ export function LoginButtons() {
         <nav className="p-4 border-b border-border/70 sticky top-0 bg-card z-10">
           <div className="container mx-auto flex justify-between items-center">
             <Link href={homePath} className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded-md flex items-center justify-center bg-gradient-to-br from-blue-400 via-purple-400 to-pink-400 shadow-md">
-                  <span className="font-headline font-bold text-lg text-primary-foreground">
-                      TT
-                  </span>
-              </div>
+                <div className="w-8 h-8 rounded-md flex items-center justify-center bg-card border">
+                    <span className="font-headline font-bold text-lg bg-gradient-to-br from-blue-400 via-purple-400 to-pink-400 text-transparent bg-clip-text">
+                        TT
+                    </span>
+                </div>
             </Link>
             
             <div className="hidden md:flex items-center space-x-2">
@@ -168,7 +168,7 @@ export function LoginButtons() {
 
         <CardHeader className="text-center p-8 md:p-12 bg-primary/5">
           <CardTitle className="text-4xl md:text-5xl font-extrabold font-headline mt-8">
-            <span className="bg-gradient-to-br from-blue-500 via-purple-500 to-pink-500 text-transparent bg-clip-text [text-shadow:0_0_12px_hsl(var(--primary)/0.5)]">
+            <span className="bg-gradient-to-br from-blue-700 via-purple-700 to-pink-700 text-transparent bg-clip-text [text-shadow:0_0_8px_hsl(var(--primary)/0.5)]">
               {APP_NAME}
             </span>
           </CardTitle>
@@ -207,7 +207,7 @@ export function LoginButtons() {
 
             <div className="pt-8 border-t border-border/70">
               <h3 className="text-2xl md:text-3xl font-bold font-headline text-center mb-10 text-foreground">
-                Why Choose <span className="bg-gradient-to-br from-blue-500 via-purple-500 to-pink-500 text-transparent bg-clip-text [text-shadow:0_0_12px_hsl(var(--primary)/0.5)]">{APP_NAME}</span>?
+                Why Choose <span className="bg-gradient-to-br from-blue-700 via-purple-700 to-pink-700 text-transparent bg-clip-text [text-shadow:0_0_8px_hsl(var(--primary)/0.5)]">{APP_NAME}</span>?
               </h3>
               <div className="grid md:grid-cols-3 gap-6 text-left md:text-center">
                 {[
