@@ -28,19 +28,21 @@ export function LoginButtons() {
   const { user, role, isLoading: isAuthLoading, setGuestRole, logout } = useUserRole();
   const router = useRouter();
   
+  // This effect handles the initial loading screen.
+  // Once authentication status is determined, it allows the page to render.
   useEffect(() => {
-    // If auth is no longer loading, the initial load is complete.
     if (!isAuthLoading) {
       setIsInitialLoad(false);
     }
   }, [isAuthLoading]);
-  
+
+  // This effect handles redirection for logged-in users, including guests.
   useEffect(() => {
-    // This effect handles the redirect after a guest logs in.
-    if (user && role && user.isAnonymous) {
+    if (!isAuthLoading && user && role) {
       router.push(`/${role}/dashboard`);
     }
-  }, [user, role, router]);
+  }, [isAuthLoading, user, role, router]);
+
 
   const handleAuthDialogOpen = (role: UserRole, tab: 'signin' | 'signup' = 'signup') => {
     setSelectedRole(role);
@@ -55,14 +57,15 @@ export function LoginButtons() {
       setIsGuestLoading(true);
       await setGuestRole(roleToPreview);
       // The useEffect hook above will handle the redirect.
-      setIsGuestLoading(false);
+      // We don't need to manually stop the loader, as the page will redirect away.
     }
   };
 
   const homePath = "/";
 
-  // While checking auth status on initial load, show a spinner.
-  if (isInitialLoad) {
+  // While checking auth status or if a logged-in user is about to be redirected,
+  // show a full-page loading indicator. This prevents the "flash of content".
+  if (isInitialLoad || (!isAuthLoading && user && role)) {
     return (
       <div className="flex items-center justify-center h-screen bg-background">
         <Loader2 className="h-12 w-12 animate-spin text-primary" />
@@ -204,7 +207,7 @@ export function LoginButtons() {
 
             <div className="pt-8 border-t border-border/70">
               <h3 className="text-2xl md:text-3xl font-bold font-headline text-center mb-10 text-foreground">
-                Why Choose <span className="text-primary">{APP_NAME}</span>?
+                Why Choose <span className="bg-gradient-to-br from-blue-700 via-purple-700 to-pink-700 text-transparent bg-clip-text [text-shadow:0_0_12px_hsl(var(--primary)/0.5)]">{APP_NAME}</span>?
               </h3>
               <div className="grid md:grid-cols-3 gap-6 text-left md:text-center">
                 {[
